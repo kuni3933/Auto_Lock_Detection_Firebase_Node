@@ -18,14 +18,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kuni3933/AutoLock.git"
+    "url": "git+https://github.com/kuni3933/Auto_Lock_Detection_Firebase_Node.git"
   },
-  "author": "",
+  "author": "kuni3933",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/kuni3933/AutoLock/issues"
+    "url": "https://github.com/kuni3933/Auto_Lock_Detection_Firebase_Node/issues"
   },
-  "homepage": "https://github.com/kuni3933/AutoLock#readme",
+  "homepage": "https://github.com/kuni3933/Auto_Lock_Detection_Firebase_Node#readme",
   "volta": {
     "node": "16.13.0"
   }
