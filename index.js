@@ -5,6 +5,9 @@ import { onValue, ref } from "firebase/database";
 import { lockCommand, unlockCommand } from "./lib/PythonFileCheck.js";
 import { raspPiNum } from "./lib/RaspPiSerialNumberInit.js";
 
+// Initialize notInitializationFlag
+let notInitializationFlag = false;
+
 // Initialize command
 let command = null;
 
@@ -34,7 +37,7 @@ onValue(isLockedRef, (snapshot) => {
       break;
   }
 
-  if (command != null) {
+  if (notInitializationFlag == true && command != null) {
     exec(command, function (err, stdout, stderr) {
       console.log("execute => " + command);
       if (!err) {
@@ -45,5 +48,5 @@ onValue(isLockedRef, (snapshot) => {
       }
     });
     command = null;
-  }
+  }else if(notInitializationFlag != true) { notInitializationFlag = true }
 });
