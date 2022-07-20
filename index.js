@@ -19,34 +19,42 @@ onValue(isLockedRef, (snapshot) => {
   console.log("--------------------------------------------------");
   switch (snapshot.val()) {
     case null:
-      console.log("Error: snapshot.val() is null...<(+p+)>");
+      console.log("Error: snapshot.val() == null ...<(+p+)>");
       break;
+
     case true:
       console.log(raspPiNum + ".Is_Locked: True");
       aa_log("True");
       command = lockCommand;
-      //command = null;
       break;
+
     case false:
       console.log(raspPiNum + ".Is_Locked: False");
       aa_log("False");
       command = unlockCommand;
-      //command = null;
       break;
+
     default:
       break;
   }
 
-  if (notInitializationFlag == true && command != null) {
-    exec(command, function (err, stdout, stderr) {
-      console.log("execute => " + command);
-      if (!err) {
-        console.log("stdout: " + stdout);
-        console.log("stderr: " + stderr);
-      } else {
-        console.log(err);
-      }
-    });
-    command = null;
-  }else if(notInitializationFlag != true) { notInitializationFlag = true }
+  if (notInitializationFlag == true) {
+    if (command != null) {
+      exec(command, function (err, stdout, stderr) {
+        console.log("execute => " + command);
+        if (!err) {
+          console.log("stdout: " + stdout);
+          console.log("stderr: " + stderr);
+        } else {
+          console.log(err);
+        }
+      });
+      command = null;
+    } else {
+      console.log("Error: command == null ...<(+p+)>");
+    }
+  } else {
+    notInitializationFlag = true;
+    console.log("Warning: notInitializationFlag == true ...<(+p+)>");
+  }
 });
