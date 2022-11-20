@@ -7,13 +7,12 @@ export class Unlocked extends State {
   constructor(raspPiSerialNumber) {
     // スーパークラスのStateを引き継ぐ
     super(raspPiSerialNumber);
-
-    //Property
-    this.nextStateIsLocked = false;
+    this.isLocked = false;
   }
 
-  // stateの変更直後にモーターを回す際の関数
+  // stateの変更直後にモーターを回す際のメソッド
   entry_proc() {
+    super.entry_proc();
     // Unlocked_Angle
     const Unlocked_Angle = (() => {
       const jsonData = JSON.parse(fs.readFileSync("config.json", "utf-8"));
@@ -22,7 +21,6 @@ export class Unlocked extends State {
     })();
 
     // ログ
-    console.log("--------------------------------------------------");
     console.log("State: Unlocked");
     console.log(`Unlocked_Angle: ${Unlocked_Angle}`);
 
@@ -30,31 +28,19 @@ export class Unlocked extends State {
     console.log(`モーターを${Unlocked_Angle}度まで回す`);
   }
 
-  initOnValue() {
-    console.log("wait_for_next_state...");
-
-    onValue(this.isLockedRef, (snapshot) => {
-      if (snapshot.val() == true) {
-        console.log("snapshot: true");
-        this.nextStateIsLocked = true;
-      } else if (snapshot.val() == false) {
-        console.log("snapshot: false");
-      }
-      console.log(`nextStateIsLocked: ${this.nextStateIsLocked}`);
-    });
-  }
-
   wait_for_next_state() {
+    super.wait_for_next_state();
     while (true) {
-      if (this.nextStateIsLocked == true) {
+      if (this.moveNextState == true) {
         console.log("nextState: Locked");
         break;
       }
     }
-    return new Locked(this.raspPiSerialNumber);
+    const nextState = new Locked(this.raspPiSerialNumber);
+    return nextState;
   }
 
   exit_proc() {
-    console.log("State is changed");
+    super.exit_proc();
   }
 }
