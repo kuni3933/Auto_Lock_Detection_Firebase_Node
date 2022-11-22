@@ -30,10 +30,8 @@ export class Locked extends State {
 
   wait_for_next_state() {
     super.wait_for_next_state();
-    while (true) {
-      if (this.moveNextState == true) {
-        break;
-      }
+    while (this.moveNextState != true) {
+      //console.log(this.moveNextState);
     }
     const nextState = new Unlocked(this.raspPiSerialNumber);
     console.log("nextState: Unlocked");
