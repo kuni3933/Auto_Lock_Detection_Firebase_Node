@@ -35,16 +35,16 @@ export class State {
   // method
   entry_proc() {
     console.log("--------------------------------------------------");
-    console.log("entry_proc()");
+    console.log(`${this.constructor.name}: entry_proc()`);
   }
   wait_for_next_state() {
-    console.log("\nwait_for_next_state()");
+    console.log(`\n${this.constructor.name}: wait_for_next_state()`);
   }
   exit_proc() {
-    console.log("\nexit_proc()");
+    console.log(`\n${this.constructor.name}: exit_proc()`);
+    console.log("State is changed");
   }
   reset() {
-    console.log("\nreset()");
-    console.log("State is changed\n");
+    console.log(`\n${this.constructor.name}: reset()`);
   }
 }

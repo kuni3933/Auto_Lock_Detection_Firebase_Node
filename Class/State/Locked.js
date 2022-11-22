@@ -13,6 +13,7 @@ export class Locked extends State {
   // stateの変更直後にモーターを回す際のメソッド
   entry_proc() {
     super.entry_proc();
+
     // Locked_Angle
     const Locked_Angle = (() => {
       const jsonData = JSON.parse(fs.readFileSync("config.json", "utf-8"));
@@ -21,7 +22,6 @@ export class Locked extends State {
     })();
 
     // ログ
-    console.log("State: Locked");
     console.log(`Locked_Angle: ${Locked_Angle}`);
 
     // インスタンス生成の段階でモーターをUnlockedの位置まで回す
@@ -30,15 +30,16 @@ export class Locked extends State {
 
   wait_for_next_state() {
     super.wait_for_next_state();
-    while (this.moveNextState != true) {
-      //console.log(this.moveNextState);
-    }
-    const nextState = new Unlocked(this.raspPiSerialNumber);
-    console.log("nextState: Unlocked");
-    return nextState;
+    console.log("");
   }
 
   exit_proc() {
     super.exit_proc();
+    console.log("nextState: Unlocked\n");
+  }
+
+  reset() {
+    super.reset();
+    console.log("");
   }
 }

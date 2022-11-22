@@ -40,43 +40,17 @@ export class Door {
     return door;
   }
 
-  // method
-  async initOnValue() {
-    console.log("--------------------------------------------------");
-    console.log("Start: initOnValue()");
-
-    onValue(this.isLockedRef, (snapshot) => {
-      let isLocked = snapshot.val();
-
-      if (isLocked != this.state.isLocked && this.state.moveNextState != true) {
-        this.state.moveNextState = true;
-      }
-
-      console.log(`\nsnapshot: ${isLocked}`);
-      console.log(`moveNextState: ${this.state.moveNextState}\n`);
-    });
-  }
-
-  async initOnChildChanged() {
-    console.log("--------------------------------------------------");
-    console.log("Start: initOnChildChanged()");
-
-    onChildChanged(this.isLockedRef, (snapshot) => {
-      let isLocked = snapshot.val();
-
-      if (isLocked != this.state.isLocked && this.state.moveNextState != true) {
-        this.state.moveNextState = true;
-      }
-
-      console.log(`\nsnapshot: ${isLocked}`);
-      console.log(`moveNextState: ${this.state.moveNextState}\n`);
-    });
-  }
-
-  update_state() {
+  execute_state() {
     this.state.entry_proc();
-    const nextState = this.state.wait_for_next_state();
+    this.state.wait_for_next_state();
+  }
+
+  change_state() {
     this.state.exit_proc();
-    this.state = nextState;
+    if (this.state instanceof Locked) {
+      this.state = new Unlocked(this.raspPiSerialNumber);
+    } else if (this.state instanceof Unlocked) {
+      this.state = new Locked(this.raspPiSerialNumber);
+    }
   }
 }
