@@ -17,7 +17,7 @@ export class State {
     this.isLocked = undefined;
 
     // set moveNextState
-    this.moveNextState = false;
+    this.moveNextState = undefined;
 
     // set Is_Locked_History_Ref
     this.isLockedHistoryRef = ref(
@@ -38,13 +38,13 @@ export class State {
     console.log("entry_proc()");
   }
   wait_for_next_state() {
-    console.log("wait_for_next_state()");
+    console.log("\nwait_for_next_state()");
   }
   exit_proc() {
-    console.log("exit_proc()");
+    console.log("\nexit_proc()");
   }
   reset() {
-    console.log("reset()");
+    console.log("\nreset()");
     console.log("State is changed\n");
   }
 }

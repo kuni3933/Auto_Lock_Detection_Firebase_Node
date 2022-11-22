@@ -1,9 +1,9 @@
 import { Door } from "./Class/Door.js";
 
 const door = await Door.initDoor();
-door.initOnValue();
+await door.initOnValue();
 
-setInterval(() => {
+setTimeout(() => {
   while (true) {
     door.update_state();
   }

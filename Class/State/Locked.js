@@ -1,4 +1,3 @@
-import { onValue } from "firebase/database";
 import * as fs from "fs";
 import { State } from "./State.js";
 import { Unlocked } from "./Unlocked.js";
@@ -8,6 +7,7 @@ export class Locked extends State {
     // スーパークラスのStateを引き継ぐ
     super(raspPiSerialNumber);
     this.isLocked = true;
+    this.moveNextState = false;
   }
 
   // stateの変更直後にモーターを回す際のメソッド
@@ -32,11 +32,11 @@ export class Locked extends State {
     super.wait_for_next_state();
     while (true) {
       if (this.moveNextState == true) {
-        console.log("nextState: Unlocked");
         break;
       }
     }
     const nextState = new Unlocked(this.raspPiSerialNumber);
+    console.log("nextState: Unlocked");
     return nextState;
   }
 
