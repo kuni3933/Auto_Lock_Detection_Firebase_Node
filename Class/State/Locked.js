@@ -14,18 +14,17 @@ export class Locked extends State {
   entry_proc() {
     super.entry_proc();
 
-    // Locked_Angle
-    const Locked_Angle = (() => {
+    // Angle
+    const Angle = (() => {
       const jsonData = JSON.parse(fs.readFileSync("config.json", "utf-8"));
-      const Angle = jsonData.Locked_Angle;
-      return Angle;
+      return jsonData.Angle;
     })();
 
     // ログ
-    console.log(`Locked_Angle: ${Locked_Angle}`);
+    console.log(`${JSON.stringify(Angle)}`);
 
-    // インスタンス生成の段階でモーターをUnlockedの位置まで回す
-    console.log(`モーターを${Locked_Angle}度まで回す`);
+    // インスタンス生成の段階でモーターをLockedの位置まで回す
+    console.log(`モーターを${Angle.Locked}度まで回す`);
   }
 
   wait_for_next_state() {
