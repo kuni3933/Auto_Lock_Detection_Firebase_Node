@@ -7,7 +7,7 @@
   },
   "dependencies": {
     "child_process": "^1.0.2",
-    "figlet": "^1.5.2",
+    "dotenv": "^16.0.3",
     "firebase": "^9.8.2",
     "raspi-serial-number": "^1.0.6"
   },
