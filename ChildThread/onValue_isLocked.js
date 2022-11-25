@@ -3,6 +3,7 @@ import { getSerialNumber } from "raspi-serial-number";
 import { onValue, ref } from "firebase/database";
 import { db } from "../lib/FirebaseInit.js";
 
+//* Get raspPiSerialNumber
 const raspPiSerialNumber = await getSerialNumber()
   .then((number) => {
     return number;
@@ -14,7 +15,7 @@ const raspPiSerialNumber = await getSerialNumber()
 
 onValue(ref(db, `RaspPi/${raspPiSerialNumber}/Is_Locked`), (snapshot) => {
   // ログ
-  console.log("childThread: onValue.js");
+  console.log("childThread: onValue_isLocked.js");
 
   // 変更値をisLockedに格納
   let isLocked = snapshot.val();

@@ -1,8 +1,8 @@
 # .env
 .env
 
-# config
-config.json
+# Config
+Config/*.json
 
 # Logs
 logs

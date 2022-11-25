@@ -16,15 +16,15 @@ export class Unlocked extends State {
 
     // Angle
     const Angle = (() => {
-      const jsonData = JSON.parse(fs.readFileSync("config.json", "utf-8"));
-      return jsonData.Angle;
+      const Angle = JSON.parse(fs.readFileSync("./Config/Angle.json", "utf-8"));
+      return Angle;
     })();
 
     // ログ
     console.log(`${JSON.stringify(Angle)}`);
 
     // インスタンス生成の段階でモーターをUnlockedの位置まで回す
-    console.log(`モーターを${Angle.Unlocked}度まで回す`);
+    console.log(`モーターを${Angle.Unlock}度まで回す`);
   }
 
   wait_for_next_state() {
