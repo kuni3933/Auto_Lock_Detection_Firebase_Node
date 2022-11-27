@@ -7,12 +7,10 @@ export class State {
   #sharedArrayBuffer;
   #sharedUint8Array;
   time;
-  isLockedRef;
-  isLockedHistoryRef;
-  isLockedUserHistoryRef;
+  onValue_isLocked_Thread;
 
   // Constructor
-  constructor(raspPiSerialNumber, sharedArrayBuffer) {
+  constructor(raspPiSerialNumber, sharedArrayBuffer, onValue_isLocked_Thread) {
     // set raspPiSerialNumber
     this.raspPiSerialNumber = raspPiSerialNumber;
 
@@ -28,20 +26,7 @@ export class State {
     // set Time
     this.time = Date.now();
 
-    // set Is_Locked_Ref
-    this.isLockedRef = ref(db, `RaspPi/${raspPiSerialNumber}/Is_Locked`);
-
-    // set Is_Locked_History_Ref
-    this.isLockedHistoryRef = ref(
-      db,
-      `RaspPi/${raspPiSerialNumber}/Is_Locked_History`
-    );
-
-    // set Is_Locked_User_History_Ref
-    this.isLockedUserHistoryRef = ref(
-      db,
-      `RaspPi/${raspPiSerialNumber}/Is_Locked_User_History`
-    );
+    this.onValue_isLocked_Thread = onValue_isLocked_Thread;
   }
 
   // getter [sharedArrayBuffer]

@@ -4,9 +4,9 @@ import { State } from "./State.js";
 import { Unlocked } from "./Unlocked.js";
 
 export class Locked extends State {
-  constructor(raspPiSerialNumber, sharedArrayBuffer) {
+  constructor(raspPiSerialNumber, sharedArrayBuffer, onValue_isLocked_Thread) {
     // スーパークラスのStateを引き継ぐ
-    super(raspPiSerialNumber, sharedArrayBuffer);
+    super(raspPiSerialNumber, sharedArrayBuffer, onValue_isLocked_Thread);
     this.isLockedBoolean = true;
   }
 
@@ -26,7 +26,7 @@ export class Locked extends State {
     console.log(`モーターを${Angle.Lock}度まで回す`);
   }
 
-  async wait_for_next_state() {
+  wait_for_next_state() {
     super.wait_for_next_state();
 
     // Angle
@@ -39,7 +39,9 @@ export class Locked extends State {
 
     while (true) {
       if (this.isOpened == true) {
-        await set(this.isLockedRef, false);
+        // onValue_isLocked_Threadに書き込み処理のためisLockedをPost送信
+        this.onValue_isLocked_Thread.postMessage({ isLocked: false });
+        // ついでにsharedUint8Array[0]に0を書き込む
         this.isLocked = false;
         break;
       }
@@ -47,7 +49,11 @@ export class Locked extends State {
         break;
       }
     }
-    return new Unlocked(this.raspPiSerialNumber, this.sharedArrayBuffer);
+    return new Unlocked(
+      this.raspPiSerialNumber,
+      this.sharedArrayBuffer,
+      this.onValue_isLocked_Thread
+    );
   }
 
   exit_proc() {

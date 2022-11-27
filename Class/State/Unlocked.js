@@ -1,12 +1,11 @@
 import * as fs from "fs";
-import { set } from "firebase/database";
 import { State } from "./State.js";
 import { Locked } from "./Locked.js";
 
 export class Unlocked extends State {
-  constructor(raspPiSerialNumber, sharedArrayBuffer) {
+  constructor(raspPiSerialNumber, sharedArrayBuffer, onValue_isLocked_Thread) {
     // スーパークラスのStateを引き継ぐ
-    super(raspPiSerialNumber, sharedArrayBuffer);
+    super(raspPiSerialNumber, sharedArrayBuffer, onValue_isLocked_Thread);
     this.isLockedBoolean = false;
   }
 
@@ -26,7 +25,7 @@ export class Unlocked extends State {
     console.log(`モーターを${Angle.Unlock}度まで回す`);
   }
 
-  async wait_for_next_state() {
+  wait_for_next_state() {
     super.wait_for_next_state();
 
     // Angle
@@ -77,7 +76,9 @@ export class Unlocked extends State {
         //console.log(this.time);
         //console.log(Date.now() - this.time);
       }
-      await set(this.isLockedRef, true);
+      // onValue_isLocked_Threadに書き込み処理のためisLockedをPost送信
+      this.onValue_isLocked_Thread.postMessage({ isLocked: true });
+      // ついでにsharedUint8Array[0]に0を書き込む
       this.isLocked = true;
     } else if (Autolock_Time != 0 && Autolock_Sensor == false) {
       //オートロックタイマーだけが有効な場合
@@ -93,14 +94,20 @@ export class Unlocked extends State {
         //console.log(this.time);
         //console.log(Date.now() - this.time);
       }
-      await set(this.isLockedRef, true);
+      this.onValue_isLocked_Thread.postMessage({ isLocked: true });
       this.isLocked = true;
     } else {
       while (true) {
-        if (this.isLocked != this.isLockedBoolean) break;
+        if (this.isLocked != this.isLockedBoolean) {
+          break;
+        }
       }
     }
-    return new Locked(this.raspPiSerialNumber, this.sharedArrayBuffer);
+    return new Locked(
+      this.raspPiSerialNumber,
+      this.sharedArrayBuffer,
+      this.onValue_isLocked_Thread
+    );
   }
 
   exit_proc() {

@@ -49,9 +49,9 @@ const onValue_isLocked_Thread = new Worker(
 );
 
 // メイン処理を起動
-const door = await Door.initDoor(sharedArrayBuffer);
+const door = await Door.initDoor(sharedArrayBuffer, onValue_isLocked_Thread);
 while (true) {
-  await door.update_state();
+  door.update_state();
 }
 
 //*/
