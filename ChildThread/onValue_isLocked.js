@@ -1,7 +1,10 @@
-import { parentPort } from "worker_threads";
+import { workerData } from "worker_threads";
 import { getSerialNumber } from "raspi-serial-number";
 import { onValue, ref } from "firebase/database";
 import { db } from "../lib/FirebaseInit.js";
+
+//
+const sharedUint8Array = new Uint8Array(workerData);
 
 //* Get raspPiSerialNumber
 const raspPiSerialNumber = await getSerialNumber()
@@ -9,7 +12,7 @@ const raspPiSerialNumber = await getSerialNumber()
     return number;
   })
   .catch((err) => {
-    // console.log(err);
+    console.log(err);
     return "83ed5c72";
   });
 
@@ -18,8 +21,12 @@ onValue(ref(db, `RaspPi/${raspPiSerialNumber}/Is_Locked`), (snapshot) => {
   console.log("childThread: onValue_isLocked.js");
 
   // 変更値をisLockedに格納
-  let isLocked = snapshot.val();
+  let onValue_isLocked = snapshot.val();
 
-  // 親スレッドにisLockedをPOST送信
-  parentPort.postMessage({ isLocked: isLocked });
+  // ログ
+  console.log(`{ onValue_isLocked: ${onValue_isLocked} }`);
+
+  if (onValue_isLocked == true || onValue_isLocked == false) {
+    Atomics.store(sharedUint8Array, 0, onValue_isLocked);
+  }
 });
