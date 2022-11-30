@@ -10,7 +10,7 @@ export class Locked extends State {
     this.isLockedBoolean = true;
   }
 
-  // モーターを[Locked]状態にまで回す際のメソッド
+  //* モーターを[Locked]状態にまで回す際のメソッド
   entry_proc() {
     super.entry_proc();
 
@@ -22,10 +22,11 @@ export class Locked extends State {
       return Angle;
     })();
 
-    // インスタンス生成の段階でモーターを[Locked]の位置まで回す
+    // モーターを[Locked]の位置まで回す
     console.log(`モーターを${Angle.Lock}度まで回す`);
   }
 
+  //* 次のステートへ移行するためイベントを待つメソッド
   wait_for_next_state() {
     super.wait_for_next_state();
 
@@ -46,7 +47,8 @@ export class Locked extends State {
         this.isLocked = false;
         break;
       }
-      if (this.isLocked != this.isLockedBoolean) {
+      // firebase側からUnlockedが指示された場合
+      else if (this.isLocked != this.isLockedBoolean) {
         break;
       }
     }
@@ -57,11 +59,13 @@ export class Locked extends State {
     );
   }
 
+  //* 次のステートに移行する直前に実行されるメソッド
   exit_proc() {
     super.exit_proc();
     console.log("nextState: Unlocked\n");
   }
 
+  //* タイマーリセットを行うメソッド
   reset() {
     super.reset();
   }

@@ -1,4 +1,5 @@
 import * as fs from "fs";
+import sleep from "sleep";
 import { State } from "./State.js";
 import { Locked } from "./Locked.js";
 
@@ -9,7 +10,7 @@ export class Unlocked extends State {
     this.isLockedBoolean = false;
   }
 
-  // モーターを[Unlocked]状態にまで回す際のメソッド
+  //* モーターを[Unlocked]状態にまで回す際のメソッド
   entry_proc() {
     super.entry_proc();
 
@@ -21,10 +22,11 @@ export class Unlocked extends State {
       return Angle;
     })();
 
-    // インスタンス生成の段階でモーターを[Unlocked]の位置まで回す
+    // モーターを[Unlocked]の位置まで回す
     console.log(`モーターを${Angle.Unlock}度まで回す`);
   }
 
+  //* 次のステートへ移行するためイベントを待つメソッド
   wait_for_next_state() {
     super.wait_for_next_state();
 
@@ -59,7 +61,7 @@ export class Unlocked extends State {
     // タイマー処理等のためにthis.timeをリセット
     this.reset();
 
-    // オートロックタイマーが0以上 && リードスイッチによるオートロックがtrue の場合
+    //* オートロックタイマーが0以上 && リードスイッチによるオートロックがtrue の場合
     if (Autolock_Time != 0 && Autolock_Sensor == true) {
       let doorIsOpenedOnce = false; // リードスイッチでドアが一回開いたかどうかを判定する変数
       while (Date.now() - this.time < Autolock_Time) {
@@ -67,12 +69,14 @@ export class Unlocked extends State {
         if (this.isOpened == true) {
           this.reset(); // タイマーをリセット
           doorIsOpenedOnce = true; // 一度はドアが開いたのでTrue
-        } else if (doorIsOpenedOnce == true) {
-          // ドアが閉まっていて 一度は開いていた場合
-          break;
+        }
+        // ドアが閉まっていて 一度は開いていた場合
+        else if (doorIsOpenedOnce == true) {
+          sleep.sleep(1); // 1秒後も開いていなかったらbreak
+          if (this.isOpened == false) break;
         }
         // firebase側からLockedが指示された場合
-        if (this.isLocked != this.isLockedBoolean) {
+        else if (this.isLocked != this.isLockedBoolean) {
           break;
         }
         //console.log(this.time);
@@ -85,15 +89,16 @@ export class Unlocked extends State {
         // ついでにsharedUint8Array[0]に0を書き込む
         this.isLocked = true;
       }
-    } else if (Autolock_Time != 0 && Autolock_Sensor == false) {
-      // オートロックタイマーが0以上 && リードスイッチによるオートロックがfalse の場合
+    }
+    //* オートロックタイマーが0以上 && リードスイッチによるオートロックがtrue以外 の場合
+    else if (Autolock_Time != 0 && Autolock_Sensor != true) {
       while (Date.now() - this.time < Autolock_Time) {
         // ドアが開いた場合
-        if (this.isOpened != false) {
+        if (this.isOpened == true) {
           this.reset(); //ドアが空いたらタイマーをリセット
         }
         // firebase側からLockedを指示された場合
-        if (this.isLocked != this.isLockedBoolean) {
+        else if (this.isLocked != this.isLockedBoolean) {
           break;
         }
         //console.log(this.time);
@@ -106,20 +111,22 @@ export class Unlocked extends State {
         // ついでにsharedUint8Array[0]に0を書き込む
         this.isLocked = true;
       }
-    } else if (Autolock_Time == 0 && Autolock_Sensor == true) {
-      // オートロックタイマーが0 && リードスイッチによるオートロックがtrue の場合
+    }
+    //* オートロックタイマーが0 && リードスイッチによるオートロックがtrue の場合
+    else if (Autolock_Time == 0 && Autolock_Sensor == true) {
       let doorIsOpenedOnce = false; // リードスイッチでドアが一回開いたかどうかを判定する変数
       while (true) {
-        console.log(`isOpened: ${this.isOpened}`);
         // ドアが開いた場合
         if (this.isOpened == true) {
           doorIsOpenedOnce = true; // 一度はドアが開いたのでTrue
-        } else if (doorIsOpenedOnce == true) {
-          // ドアが閉まっていて 一度は開いていた場合
-          break;
+        }
+        // ドアが閉まっていて 一度は開いていた場合
+        else if (doorIsOpenedOnce == true) {
+          sleep.sleep(1); // 1秒後も開いていなかったらbreak
+          if (this.isOpened == false) break;
         }
         // firebase側からLockedが指示された場合
-        if (this.isLocked != this.isLockedBoolean) {
+        else if (this.isLocked != this.isLockedBoolean) {
           break;
         }
         //console.log(this.time);
@@ -132,8 +139,9 @@ export class Unlocked extends State {
         // ついでにsharedUint8Array[0]に0を書き込む
         this.isLocked = true;
       }
-    } else {
-      // オートロックタイマーが0 && リードスイッチによるオートロックがfalse の場合
+    }
+    //* オートロックタイマーが0 && リードスイッチによるオートロックがtrue以外 の場合
+    else {
       while (true) {
         if (this.isLocked != this.isLockedBoolean) {
           break;
@@ -147,11 +155,13 @@ export class Unlocked extends State {
     );
   }
 
+  //* 次のステートに移行する直前に実行されるメソッド
   exit_proc() {
     super.exit_proc();
     console.log("nextState: Locked\n");
   }
 
+  //* タイマーリセットを行うメソッド
   reset() {
     super.reset();
   }
