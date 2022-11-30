@@ -38,6 +38,7 @@ export class Locked extends State {
     })();
 
     while (true) {
+      // ドアが開いた場合
       if (this.isOpened == true) {
         // onValue_isLocked_Threadに書き込み処理のためisLockedをPost送信
         this.onValue_isLocked_Thread.postMessage({ isLocked: false });

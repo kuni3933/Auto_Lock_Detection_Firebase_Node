@@ -56,46 +56,56 @@ export class Unlocked extends State {
       return Autolock_Time;
     })();
 
-    // オートロックタイマーが0以上&&リードスイッチによるオートロックがtrueの場合
+    // タイマー処理等のためにthis.timeをリセット
+    this.reset();
+
+    // オートロックタイマーが0以上 && リードスイッチによるオートロックがtrue の場合
     if (Autolock_Time != 0 && Autolock_Sensor == true) {
-      this.reset();
       let doorIsOpenedOnce = false; // リードスイッチでドアが一回開いたかどうかを判定する変数
       while (Date.now() - this.time < Autolock_Time) {
-        if (this.isOpened != false) {
-          this.reset(); //ドアが空いたらタイマーをリセット
-          if (Autolock_Sensor == true && doorIsOpenedOnce == false) {
-            doorIsOpenedOnce = true;
-          } else if (Autolock_Sensor == false && doorIsOpenedOnce == true) {
-            break;
-          }
+        // ドアが開いた場合
+        if (this.isOpened == true) {
+          this.reset(); // タイマーをリセット
+          doorIsOpenedOnce = true; // 一度はドアが開いたのでTrue
+        } else if (doorIsOpenedOnce == true) {
+          // ドアが閉まっていて 一度は開いていた場合
+          break;
         }
+        // firebase側からLockedが指示された場合
         if (this.isLocked != this.isLockedBoolean) {
-          console.log("break");
           break;
         }
         //console.log(this.time);
         //console.log(Date.now() - this.time);
       }
-      // onValue_isLocked_Threadに書き込み処理のためisLockedをPost送信
-      this.onValue_isLocked_Thread.postMessage({ isLocked: true });
-      // ついでにsharedUint8Array[0]に0を書き込む
-      this.isLocked = true;
+      // firebase側からLockedを指示されていない場合(即ちまだisLockedがfalseの場合)
+      if (this.isLocked == this.isLockedBoolean) {
+        // onValue_isLocked_Threadに書き込み処理のためisLockedをPost送信
+        this.onValue_isLocked_Thread.postMessage({ isLocked: true });
+        // ついでにsharedUint8Array[0]に0を書き込む
+        this.isLocked = true;
+      }
     } else if (Autolock_Time != 0 && Autolock_Sensor == false) {
       //オートロックタイマーだけが有効な場合
-      this.reset();
       while (Date.now() - this.time < Autolock_Time) {
+        // ドアが開いた場合
         if (this.isOpened != false) {
           this.reset(); //ドアが空いたらタイマーをリセット
         }
+        // firebase側からLockedを指示された場合
         if (this.isLocked != this.isLockedBoolean) {
-          console.log("break");
           break;
         }
         //console.log(this.time);
         //console.log(Date.now() - this.time);
       }
-      this.onValue_isLocked_Thread.postMessage({ isLocked: true });
-      this.isLocked = true;
+      // firebase側からLockedを指示されていない場合(即ちまだisLockedがfalseの場合)
+      if (this.isLocked == this.isLockedBoolean) {
+        // onValue_isLocked_Threadに書き込み処理のためisLockedをPost送信
+        this.onValue_isLocked_Thread.postMessage({ isLocked: true });
+        // ついでにsharedUint8Array[0]に0を書き込む
+        this.isLocked = true;
+      }
     } else {
       while (true) {
         if (this.isLocked != this.isLockedBoolean) {
