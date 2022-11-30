@@ -26,6 +26,7 @@ if (!fs.existsSync("./Config/Token.json")) {
 //* sharedArrayBuffer[1] = ChildThread/readSwitch.js で更新されるDoorの状態[isOpened]
 const sharedArrayBuffer = new SharedArrayBuffer(4);
 const sharedUint8Array = new Uint8Array(sharedArrayBuffer);
+// 初期値設定
 Atomics.store(sharedUint8Array, 0, false); // 初期値: isLocked = false
 Atomics.store(sharedUint8Array, 1, false); // 初期値: isOpened = false
 
@@ -48,7 +49,12 @@ const onValue_isLocked_Thread = new Worker(
   { workerData: sharedArrayBuffer }
 );
 
-// メイン処理を起動
+//* readSwitchのisOpenedを読込/更新する子スレッドを起動
+const readSwitch_Thread = new Worker("./ChildThread/readSwitch.js", {
+  workerData: sharedArrayBuffer,
+});
+
+//* メイン処理を起動
 const door = await Door.initDoor(sharedArrayBuffer, onValue_isLocked_Thread);
 while (true) {
   door.update_state();
