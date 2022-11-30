@@ -1,4 +1,3 @@
-import { parentPort } from "worker_threads";
 import { getSerialNumber } from "raspi-serial-number";
 import { onValue, ref } from "firebase/database";
 import { db } from "../lib/FirebaseInit.js";
@@ -14,16 +13,19 @@ const raspPiSerialNumber = await getSerialNumber()
     return "83ed5c72";
   });
 
-onValue(ref(db, `RaspPi/${raspPiSerialNumber}/Angle`), (snapshot) => {
+onValue(ref(db, `RaspPi/${raspPiSerialNumber}/Autolock_Time`), (snapshot) => {
   // ログ
-  console.log("childThread: onValue_angle.js");
+  console.log("childThread: onValue_autolock_time.js");
 
   // 変更値[オブジェクト]をonValue_angleに格納
-  const onValue_angle = snapshot.val();
+  const onValue_autolock_time = snapshot.val();
 
   // ログ
-  console.log(`{ onValue_angle: ${JSON.stringify(onValue_angle)} }`);
+  console.log(`{ onValue_autolock_time[sec]: ${onValue_autolock_time} }`);
 
-  // Config/Angle.json への書き込み
-  fs.writeFileSync("./Config/Angle.json", JSON.stringify(onValue_angle));
+  // Config/Autolock_Time.json への書き込み
+  fs.writeFileSync(
+    "./Config/Autolock_Time.json",
+    `{"Autolock_Time": ${onValue_autolock_time}}`
+  );
 });
