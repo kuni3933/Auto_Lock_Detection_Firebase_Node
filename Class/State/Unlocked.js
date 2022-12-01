@@ -41,16 +41,6 @@ export class Unlocked extends State {
   wait_for_next_state() {
     super.wait_for_next_state();
 
-    // Angle
-    const Angle = (() => {
-      const Angle = JSON.parse(
-        fs.readFileSync(`${configDirPath}/Angle.json`, "utf-8")
-      );
-      // ログ
-      console.log(`${JSON.stringify(Angle)}`);
-      return Angle;
-    })();
-
     // Autolock_Sensor
     const Autolock_Sensor = (() => {
       const Autolock_Sensor = JSON.parse(

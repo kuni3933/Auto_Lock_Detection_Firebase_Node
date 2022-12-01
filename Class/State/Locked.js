@@ -40,16 +40,6 @@ export class Locked extends State {
   wait_for_next_state() {
     super.wait_for_next_state();
 
-    // Angle
-    const Angle = (() => {
-      const Angle = JSON.parse(
-        fs.readFileSync(`${configDirPath}/Angle.json`, "utf-8")
-      );
-      // ログ
-      console.log(`${JSON.stringify(Angle)}`);
-      return Angle;
-    })();
-
     while (true) {
       // ドアが開いた場合
       if (this.isOpened == true) {
