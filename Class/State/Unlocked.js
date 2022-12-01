@@ -3,20 +3,29 @@ import sleep from "sleep";
 import { State } from "./State.js";
 import { Locked } from "./Locked.js";
 
+//* Configディレクトリのパス
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const configDirPath = `${__dirname}/../../../Config`;
+console.log(`configDirPath: ${configDirPath}`);
+
 export class Unlocked extends State {
+  //* コンストラクタ
   constructor(raspPiSerialNumber, sharedArrayBuffer, onValue_isLocked_Thread) {
     // スーパークラスのStateを引き継ぐ
     super(raspPiSerialNumber, sharedArrayBuffer, onValue_isLocked_Thread);
     this.isLockedBoolean = false;
   }
 
+  //* メソッド
   //* モーターを[Unlocked]状態にまで回す際のメソッド
   entry_proc() {
     super.entry_proc();
 
     // Angle
     const Angle = (() => {
-      const Angle = JSON.parse(fs.readFileSync("./Config/Angle.json", "utf-8"));
+      const Angle = JSON.parse(
+        fs.readFileSync(`${configDirPath}/Angle.json`, "utf-8")
+      );
       // ログ
       console.log(`${JSON.stringify(Angle)}`);
       return Angle;
@@ -32,7 +41,9 @@ export class Unlocked extends State {
 
     // Angle
     const Angle = (() => {
-      const Angle = JSON.parse(fs.readFileSync("./Config/Angle.json", "utf-8"));
+      const Angle = JSON.parse(
+        fs.readFileSync(`${configDirPath}/Angle.json`, "utf-8")
+      );
       // ログ
       console.log(`${JSON.stringify(Angle)}`);
       return Angle;
@@ -41,7 +52,7 @@ export class Unlocked extends State {
     // Autolock_Sensor
     const Autolock_Sensor = (() => {
       const Autolock_Sensor = JSON.parse(
-        fs.readFileSync("./Config/Autolock_Sensor.json", "utf-8")
+        fs.readFileSync(`${configDirPath}/Autolock_Sensor.json`, "utf-8")
       );
       //ログ
       console.log(`${JSON.stringify(Autolock_Sensor)}`);
@@ -51,8 +62,9 @@ export class Unlocked extends State {
     // Autolock_Time
     const Autolock_Time = (() => {
       const Autolock_Time =
-        JSON.parse(fs.readFileSync("./Config/Autolock_Time.json", "utf-8"))
-          .Autolock_Time * 1000;
+        JSON.parse(
+          fs.readFileSync(`${configDirPath}/Autolock_Time.json`, "utf-8")
+        ).Autolock_Time * 1000;
       //ログ
       console.log(`{"Autolock_Time[ms]":${Autolock_Time}}`);
       return Autolock_Time;

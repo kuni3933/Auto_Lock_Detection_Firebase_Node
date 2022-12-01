@@ -3,6 +3,11 @@ import { onValue, ref } from "firebase/database";
 import { db } from "../lib/FirebaseInit.js";
 import * as fs from "fs";
 
+//* Configディレクトリのパス
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const configDirPath = `${__dirname}/../../Config`;
+console.log(`configDirPath: ${configDirPath}`);
+
 //* Get raspPiSerialNumber
 const raspPiSerialNumber = await getSerialNumber()
   .then((number) => {
@@ -25,7 +30,7 @@ onValue(ref(db, `RaspPi/${raspPiSerialNumber}/Autolock_Time`), (snapshot) => {
 
   // Config/Autolock_Time.json への書き込み
   fs.writeFileSync(
-    "./Config/Autolock_Time.json",
+    `${configDirPath}/Autolock_Time.json`,
     `{"Autolock_Time": ${onValue_autolock_time}}`
   );
 });

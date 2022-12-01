@@ -9,7 +9,7 @@ export class State {
   time;
   onValue_isLocked_Thread;
 
-  // Constructor
+  //* コンストラクタ
   constructor(raspPiSerialNumber, sharedArrayBuffer, onValue_isLocked_Thread) {
     // set raspPiSerialNumber
     this.raspPiSerialNumber = raspPiSerialNumber;
@@ -49,20 +49,24 @@ export class State {
     return Atomics.load(this.#sharedUint8Array, 1);
   }
 
-  // method
+  //* メソッド
+  //* モーターを[Locked]状態にまで回す際のメソッド
   entry_proc() {
     console.log("--------------------------------------------------");
     console.log(`${this.constructor.name}: entry_proc()`);
   }
+  //* 次のステートへ移行するためイベントを待つメソッド
   wait_for_next_state() {
     console.log(`\n${this.constructor.name}: wait_for_next_state()`);
   }
+  //* 次のステートに移行する直前に実行されるメソッド
   exit_proc() {
     console.log(`\n${this.constructor.name}: exit_proc()`);
     console.log("State is changed");
   }
+  //* タイマーリセットを行うメソッド
   reset() {
-    console.log(`\n${this.constructor.name}: reset()`);
+    console.log(`${this.constructor.name}: reset()`);
     this.time = Date.now();
   }
 }

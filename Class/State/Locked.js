@@ -1,22 +1,30 @@
 import * as fs from "fs";
-import { set } from "firebase/database";
 import { State } from "./State.js";
 import { Unlocked } from "./Unlocked.js";
 
+//* Configディレクトリのパス
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const configDirPath = `${__dirname}/../../../Config`;
+console.log(`configDirPath: ${configDirPath}`);
+
 export class Locked extends State {
+  //* コンストラクタ
   constructor(raspPiSerialNumber, sharedArrayBuffer, onValue_isLocked_Thread) {
     // スーパークラスのStateを引き継ぐ
     super(raspPiSerialNumber, sharedArrayBuffer, onValue_isLocked_Thread);
     this.isLockedBoolean = true;
   }
 
+  //* メソッド
   //* モーターを[Locked]状態にまで回す際のメソッド
   entry_proc() {
     super.entry_proc();
 
     // Angle
     const Angle = (() => {
-      const Angle = JSON.parse(fs.readFileSync("./Config/Angle.json", "utf-8"));
+      const Angle = JSON.parse(
+        fs.readFileSync(`${configDirPath}/Angle.json`, "utf-8")
+      );
       // ログ
       console.log(`${JSON.stringify(Angle)}`);
       return Angle;
@@ -32,7 +40,9 @@ export class Locked extends State {
 
     // Angle
     const Angle = (() => {
-      const Angle = JSON.parse(fs.readFileSync("./Config/Angle.json", "utf-8"));
+      const Angle = JSON.parse(
+        fs.readFileSync(`${configDirPath}/Angle.json`, "utf-8")
+      );
       // ログ
       console.log(`${JSON.stringify(Angle)}`);
       return Angle;

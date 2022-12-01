@@ -3,6 +3,11 @@ import { getSerialNumber } from "raspi-serial-number";
 import { onValue, ref } from "firebase/database";
 import { db } from "../lib/FirebaseInit.js";
 
+//* Configディレクトリのパス
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const configDirPath = `${__dirname}/../../Config`;
+console.log(`configDirPath: ${configDirPath}`);
+
 //* Get raspPiSerialNumber
 const raspPiSerialNumber = await getSerialNumber()
   .then((number) => {
@@ -26,7 +31,7 @@ onValue(ref(db, `RaspPi/${raspPiSerialNumber}/Autolock_Sensor`), (snapshot) => {
   // Config/Autolock_Sensor.json への書き込み
   if (onValue_autolock_sensor == true || onValue_autolock_sensor == false) {
     fs.writeFileSync(
-      "./Config/Autolock_Sensor.json",
+      `${configDirPath}/Autolock_Sensor.json`,
       `{"Autolock_Sensor": ${onValue_autolock_sensor}}`
     );
   }

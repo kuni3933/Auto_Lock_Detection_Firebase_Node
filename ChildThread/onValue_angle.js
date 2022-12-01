@@ -1,8 +1,12 @@
-import { parentPort } from "worker_threads";
 import { getSerialNumber } from "raspi-serial-number";
 import { onValue, ref } from "firebase/database";
 import { db } from "../lib/FirebaseInit.js";
 import * as fs from "fs";
+
+//* Configディレクトリのパス
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const configDirPath = `${__dirname}/../../Config`;
+console.log(`configDirPath: ${configDirPath}`);
 
 //* Get raspPiSerialNumber
 const raspPiSerialNumber = await getSerialNumber()
@@ -25,5 +29,8 @@ onValue(ref(db, `RaspPi/${raspPiSerialNumber}/Angle`), (snapshot) => {
   console.log(`{ onValue_angle: ${JSON.stringify(onValue_angle)} }`);
 
   // Config/Angle.json への書き込み
-  fs.writeFileSync("./Config/Angle.json", JSON.stringify(onValue_angle));
+  fs.writeFileSync(
+    `${configDirPath}/Angle.json`,
+    JSON.stringify(onValue_angle)
+  );
 });

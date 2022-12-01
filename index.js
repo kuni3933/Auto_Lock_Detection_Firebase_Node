@@ -1,22 +1,40 @@
 import * as fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 import { Worker } from "worker_threads";
 import { Door } from "./Class/Door.js";
 
+//* Configディレクトリのパス
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const configDirPath = `${__dirname}/../Config`;
+console.log(`configDirPath: ${configDirPath}`);
+
 //* Config/*.json の存在チェックと無かった場合のファイル作成
-if (!fs.existsSync("./Config/Angle.json")) {
-  fs.writeFileSync("./Config/Angle.json", '{"Lock": 0,"Unlock": 0}');
+// Configディレクトリ の存在確認と無かった場合のディレクトリ作成
+if (!fs.existsSync(configDirPath)) {
+  fs.mkdirSync(configDirPath);
 }
-if (!fs.existsSync("./Config/Autolock_Sensor.json")) {
+// "Config/Angle.json" の存在確認と無かった場合のファイル作成
+if (!fs.existsSync(`${configDirPath}/Angle.json`)) {
+  fs.writeFileSync(`${configDirPath}/Angle.json`, '{"Lock": 0,"Unlock": 0}');
+}
+// "Config/Autolock_Sensor.json" の存在確認と無かった場合のファイル作成"
+if (!fs.existsSync(`${configDirPath}/Autolock_Sensor.json`)) {
   fs.writeFileSync(
-    "./Config/Autolock_Sensor.json",
+    `${configDirPath}/Autolock_Sensor.json`,
     '{"Autolock_Sensor": false}'
   );
 }
-if (!fs.existsSync("./Config/Autolock_Time.json")) {
-  fs.writeFileSync("./Config/Autolock_Time.json", '{"Autolock_Time": 0}');
+// "Config/Autolock_Time.json" の存在確認と無かった場合のファイル作成
+if (!fs.existsSync(`${configDirPath}/Autolock_Time.json`)) {
+  fs.writeFileSync(
+    `${configDirPath}/Autolock_Time.json`,
+    '{"Autolock_Time": 0}'
+  );
 }
-if (!fs.existsSync("./Config/Token.json")) {
-  fs.writeFileSync("./Config/Token.json", '{"Token": ""}');
+// "Config/Token.json" の存在確認と無かった場合のファイル作成
+if (!fs.existsSync(`${configDirPath}/Token.json`)) {
+  fs.writeFileSync(`${configDirPath}/Token.json`, '{"Token": ""}');
 }
 
 //* スレッド間で共有する配列を宣言(4Byte)
