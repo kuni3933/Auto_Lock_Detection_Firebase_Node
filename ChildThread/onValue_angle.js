@@ -1,7 +1,9 @@
+import * as fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 import { getSerialNumber } from "raspi-serial-number";
 import { onValue, ref } from "firebase/database";
 import { db } from "../lib/FirebaseInit.js";
-import * as fs from "fs";
 
 //* Configディレクトリのパス
 const __dirname = path.dirname(fileURLToPath(import.meta.url));

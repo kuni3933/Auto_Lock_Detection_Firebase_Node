@@ -1,4 +1,6 @@
 import * as fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 import sleep from "sleep";
 import { State } from "./State.js";
 import { Locked } from "./Locked.js";
