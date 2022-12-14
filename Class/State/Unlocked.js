@@ -35,6 +35,7 @@ export class Unlocked extends State {
 
     // モーターを[Unlocked]の位置まで回す
     console.log(`モーターを${Angle.Unlock}度まで回す`);
+    this.ServoMotorClient.Turn(Angle.Unlock, "Unlocked");
   }
 
   //* 次のステートへ移行するためイベントを待つメソッド

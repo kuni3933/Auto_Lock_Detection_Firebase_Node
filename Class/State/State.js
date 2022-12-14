@@ -1,11 +1,12 @@
-import { db } from "../../lib/FirebaseInit.js";
-import { ref } from "firebase/database";
+import { ServoMotorClient } from "../ServoMotorClient.js";
+
 export class State {
   // Property
   raspPiSerialNumber;
   isLockedBoolean;
   #sharedArrayBuffer;
   #sharedUint8Array;
+  ServoMotorClient;
   time;
   onValue_isLocked_Thread;
 
@@ -19,6 +20,9 @@ export class State {
 
     // set #sharedArrayBuffer
     this.#sharedArrayBuffer = sharedArrayBuffer;
+
+    // set ServoMortorClient
+    this.ServoMotorClient = new ServoMotorClient();
 
     // set #sharedUint8Array
     this.#sharedUint8Array = new Uint8Array(sharedArrayBuffer);

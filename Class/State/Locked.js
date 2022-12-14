@@ -34,6 +34,7 @@ export class Locked extends State {
 
     // モーターを[Locked]の位置まで回す
     console.log(`モーターを${Angle.Lock}度まで回す`);
+    this.ServoMotorClient.Turn(Angle.Lock, "Locked");
   }
 
   //* 次のステートへ移行するためイベントを待つメソッド
