@@ -26,19 +26,18 @@ export class ServoMotorClient {
       try {
         // コマンドを組み立てる
         const command = `python ${this.Path}/index.py ${angle} ${state}`;
-        console.log(`command: "${command}"\n`);
 
-        // コマンドを実行してstdoutを格納
+        // コマンドを実行してstdoutをログ出力
         const stdout = execSync(command);
         console.log(`execute => ${command}`);
-        console.log(`stdout: ${stdout}`);
+        console.log(`stdout: ${stdout.toString()}`);
       } catch (error) {
-        console.log(`error: ${error}`);
+        console.log(`error: ${error.toString()}`);
         console.log(`stderr: ${error.stderr.toString()}`);
       }
     } // クライアントリポジトリがなかった場合
     else {
-      console.log(`NotFound:\nPath: ${this.Path}`);
+      console.log(`NotFoundPath: ${this.Path}`);
     }
   }
 }
