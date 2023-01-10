@@ -91,8 +91,6 @@ export class Unlocked extends State {
       if (this.isLocked == this.isLockedBoolean) {
         // onValue_isLocked_Threadに書き込み処理のためisLockedをPost送信
         this.onValue_isLocked_Thread.postMessage({ isLocked: true });
-        // ついでにsharedUint8Array[0]に0を書き込む
-        this.isLocked = true;
       }
     }
     //* オートロックタイマーが0以上 && リードスイッチによるオートロックがtrue以外 の場合
@@ -113,8 +111,6 @@ export class Unlocked extends State {
       if (this.isLocked == this.isLockedBoolean) {
         // onValue_isLocked_Threadに書き込み処理のためisLockedをPost送信
         this.onValue_isLocked_Thread.postMessage({ isLocked: true });
-        // ついでにsharedUint8Array[0]に0を書き込む
-        this.isLocked = true;
       }
     }
     //* オートロックタイマーが0 && リードスイッチによるオートロックがtrue の場合
@@ -141,8 +137,6 @@ export class Unlocked extends State {
       if (this.isLocked == this.isLockedBoolean) {
         // onValue_isLocked_Threadに書き込み処理のためisLockedをPost送信
         this.onValue_isLocked_Thread.postMessage({ isLocked: true });
-        // ついでにsharedUint8Array[0]に0を書き込む
-        this.isLocked = true;
       }
     }
     //* オートロックタイマーが0 && リードスイッチによるオートロックがtrue以外 の場合

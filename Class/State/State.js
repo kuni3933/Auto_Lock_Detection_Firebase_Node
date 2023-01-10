@@ -43,12 +43,6 @@ export class State {
     return Atomics.load(this.#sharedUint8Array, 0);
   }
 
-  set isLocked(isLocked) {
-    if (isLocked == true || isLocked == false) {
-      Atomics.store(this.#sharedUint8Array, 0, isLocked);
-    }
-  }
-
   get isOpened() {
     return Atomics.load(this.#sharedUint8Array, 1);
   }

@@ -21,10 +21,12 @@ while (true) {
   // このwhile内で一時保持する変数 whileIsOpened
   const whileIsOpened = readSwitch.digitalRead();
 
-  // このスレッドで保持している状態と比較
-  if (isOpened != whileIsOpened) {
+  // このスレッドで保持している状態変数と比較 && writeFlagがtrueか判定
+  if (isOpened != whileIsOpened && Atomics.load(sharedUint8Array, 2) == true) {
     // 比較結果として違った場合は共有メモリに保存
     Atomics.store(sharedUint8Array, 1, whileIsOpened);
+
+    // スレッドで保持している状態変数も更新
     isOpened = whileIsOpened;
 
     // RealtimeDatabaseに保存

@@ -46,8 +46,6 @@ export class Locked extends State {
       if (this.isOpened == true) {
         // onValue_isLocked_Threadに書き込み処理のためisLockedをPost送信
         this.onValue_isLocked_Thread.postMessage({ isLocked: false });
-        // ついでにsharedUint8Array[0]に0を書き込む
-        this.isLocked = false;
         break;
       }
       // firebase側からUnlockedが指示された場合
