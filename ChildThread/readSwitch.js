@@ -1,6 +1,9 @@
-import { workerData } from "worker_threads";
+import { isOpenedRef } from "../lib/FirebaseInit.js";
 import { Gpio } from "pigpio";
+import { set } from "firebase/database";
+import { workerData } from "worker_threads";
 
+// 共有メモリの設定
 const sharedUint8Array = new Uint8Array(workerData);
 
 // リードスイッチのGPIO(PIN) = 11
@@ -20,9 +23,14 @@ while (true) {
 
   // このスレッドで保持している状態と比較
   if (isOpened != whileIsOpened) {
-    // 比較結果として違った場合は保存
+    // 比較結果として違った場合は共有メモリに保存
     Atomics.store(sharedUint8Array, 1, whileIsOpened);
     isOpened = whileIsOpened;
+
+    // RealtimeDatabaseに保存
+    set(isOpenedRef, whileIsOpened);
+
+    // ログ
     console.log(`isOpened: ${whileIsOpened}`);
   }
 }

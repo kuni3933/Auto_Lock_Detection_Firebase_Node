@@ -1,34 +1,12 @@
 import { parentPort, workerData } from "worker_threads";
-import { getSerialNumber } from "raspi-serial-number";
-import { onValue, ref, set } from "firebase/database";
-import { db } from "../lib/FirebaseInit.js";
+import { onValue, set } from "firebase/database";
+import {
+  isLockedRef,
+  isLockedHistoryRef,
+  isLockedUserHistoryRef,
+} from "../lib/FirebaseInit.js";
 
 const sharedUint8Array = new Uint8Array(workerData);
-
-//* Get raspPiSerialNumber
-const raspPiSerialNumber = await getSerialNumber()
-  .then((number) => {
-    return number;
-  })
-  .catch((err) => {
-    console.log(err);
-    return "83ed5c72";
-  });
-
-// set Is_Locked_Ref
-const isLockedRef = ref(db, `RaspPi/${raspPiSerialNumber}/Is_Locked`);
-
-// set Is_Locked_History_Ref
-const isLockedHistoryRef = ref(
-  db,
-  `RaspPi/${raspPiSerialNumber}/Is_Locked_History`
-);
-
-// set Is_Locked_User_History_Ref
-const isLockedUserHistoryRef = ref(
-  db,
-  `RaspPi/${raspPiSerialNumber}/Is_Locked_User_History`
-);
 
 // isLockedをリッスン
 onValue(isLockedRef, (snapshot) => {

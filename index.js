@@ -1,5 +1,6 @@
 import * as fs from "fs";
 import path from "path";
+import sleep from "sleep";
 import { fileURLToPath } from "url";
 import { Worker } from "worker_threads";
 import { Door } from "./Class/Door.js";
@@ -31,10 +32,6 @@ if (!fs.existsSync(`${configDirPath}/Autolock_Time.json`)) {
     `${configDirPath}/Autolock_Time.json`,
     '{"Autolock_Time": 0}'
   );
-}
-// "Config/Token.json" の存在確認と無かった場合のファイル作成
-if (!fs.existsSync(`${configDirPath}/Token.json`)) {
-  fs.writeFileSync(`${configDirPath}/Token.json`, '{"Token": ""}');
 }
 
 //* スレッド間で共有する配列を宣言(4Byte)
@@ -68,6 +65,17 @@ const onValue_isLocked_Thread = new Worker(
   `${__dirname}/ChildThread/onValue_isLocked.js`,
   { workerData: sharedArrayBuffer }
 );
+
+//* "Config/customToken.json" の存在確認が取れるまで(オーナー登録がされるまで)無限ループ
+while (true) {
+  if (fs.existsSync(`${configDirPath}/customToken.json`)) {
+    break;
+  }
+  // 存在しなかったらスリープ
+  else {
+    sleep.sleep(5);
+  }
+}
 
 //* readSwitchのisOpenedを読込/更新する子スレッドを起動
 const readSwitch_Thread = new Worker(`${__dirname}/ChildThread/readSwitch.js`, {
