@@ -73,7 +73,7 @@ const readSwitch_Thread = new Worker(`${__dirname}/ChildThread/readSwitch.js`, {
   workerData: sharedArrayBuffer,
 });
 
-//*
+//* カスタムトークンが存在するか(オーナーが登録されているか)監視する子スレッドを起動
 const isOwnerRegistered_Thread = new Worker(
   `${__dirname}/ChildThread/isOwnerRegistered.js`,
   {

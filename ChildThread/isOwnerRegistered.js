@@ -1,17 +1,22 @@
 import * as fs from "fs";
+import path from "path";
 import sleep from "sleep";
+import { fileURLToPath } from "url";
 import { workerData } from "worker_threads";
 
 // 共有メモリの設定
 const sharedUint8Array = new Uint8Array(workerData);
 
+// customTokenのパス
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const customTokenPath = `${__dirname}/../..//Config/customToken.json`;
+//console.log(`customTokenPath: ${customTokenPath}`);
+
 // このスレッドで保持しておく状態変数
 let isOwnerRegistered = false;
 while (true) {
   // このwhile内で一時保持する変数
-  const whileIsOwnerRegistered = fs.existsSync(
-    `${configDirPath}/customToken.json`
-  );
+  const whileIsOwnerRegistered = fs.existsSync(customTokenPath);
 
   // このスレッドで保持している状態変数と比較 && writeFlagがtrueか判定
   if (isOwnerRegistered != whileIsOwnerRegistered) {
