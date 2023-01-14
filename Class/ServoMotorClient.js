@@ -14,7 +14,7 @@ export class ServoMotorClient {
     const __dirname = path.dirname(fileURLToPath(import.meta.url));
     //クライアントリポジトリの相対パス
     const servoDirPath = `${__dirname}/../../TeamD_RaspPi`;
-    console.log(`servoDirPath: ${servoDirPath}`);
+    //console.log(`servoDirPath: ${servoDirPath}`);
 
     this.Path = servoDirPath;
   }

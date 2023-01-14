@@ -7,7 +7,7 @@ import { Unlocked } from "./Unlocked.js";
 //* Configディレクトリのパス
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const configDirPath = `${__dirname}/../../../Config`;
-console.log(`configDirPath: ${configDirPath}`);
+//console.log(`configDirPath: ${configDirPath}`);
 
 export class Locked extends State {
   //* コンストラクタ

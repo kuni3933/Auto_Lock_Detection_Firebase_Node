@@ -59,7 +59,7 @@ onAuthStateChanged(auth, async (user) => {
 
     // customToken.jsonの存在確認が取れるまでスリープ
     while (getIsOwnerRegistered() == false) {
-      sleep.sleep(5);
+      sleep.sleep(2);
     }
 
     // APIレスポンス

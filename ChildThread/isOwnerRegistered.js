@@ -36,7 +36,7 @@ function setIsAuthStateLoggedIn(bool) {
 
 // customTokenのパス
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const customTokenPath = `${__dirname}/../..//Config/customToken.json`;
+const customTokenPath = `${__dirname}/../../Config/customToken.json`;
 //console.log(`customTokenPath: ${customTokenPath}`);
 
 // このスレッドで保持しておく状態変数
@@ -57,5 +57,5 @@ while (true) {
     console.log(`isOwnerRegistered: ${whileIsOwnerRegistered}`);
   }
   // スリープ
-  sleep.sleep(5);
+  sleep.sleep(2);
 }

@@ -7,7 +7,7 @@ import { angleRef } from "../lib/FirebaseInit.js";
 //* Configディレクトリのパス
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const configDirPath = `${__dirname}/../../Config`;
-console.log(`configDirPath: ${configDirPath}`);
+//console.log(`configDirPath: ${configDirPath}`);
 
 onValue(angleRef, (snapshot) => {
   // ログ

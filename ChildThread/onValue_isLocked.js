@@ -1,5 +1,5 @@
 import { parentPort, workerData } from "worker_threads";
-import { onValue } from "firebase/database";
+import { onValue, set } from "firebase/database";
 import { FieldValue } from "firebase/firestore";
 import { isLockedRef, raspPiSerialNumberDocRef } from "../lib/FirebaseInit.js";
 

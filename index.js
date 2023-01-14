@@ -8,7 +8,7 @@ import { Door } from "./Class/Door.js";
 //* Configディレクトリのパス
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const configDirPath = `${__dirname}/../Config`;
-console.log(`configDirPath: ${configDirPath}`);
+//console.log(`configDirPath: ${configDirPath}`);
 
 //* Config/*.json の存在チェックと無かった場合のファイル作成
 // Configディレクトリ の存在確認と無かった場合のディレクトリ作成
@@ -87,14 +87,14 @@ const onValue_isLocked_Thread = new Worker(
 
 //* RealtimeDatabaseのIs_Onlineを読込/更新する子スレッドを起動
 const onValue_isOnline_Thread = new Worker(
-  `${__dirname}/ChildThread/onValue_isLocked.js`,
+  `${__dirname}/ChildThread/onValue_isOnline.js`,
   { workerData: sharedArrayBuffer }
 );
 
 //* readSwitchのisOpenedを読込/更新する子スレッドを起動
-const readSwitch_Thread = new Worker(
-  `${__dirname}/ChildThread/onValue_isOnline.js`
-);
+const readSwitch_Thread = new Worker(`${__dirname}/ChildThread/readSwitch.js`, {
+  workerData: sharedArrayBuffer,
+});
 
 //* メイン処理を起動
 //* "Config/customToken.json" の存在確認が取れるまで(オーナー登録がされるまで)無限ループ
