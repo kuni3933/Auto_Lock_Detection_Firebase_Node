@@ -43,10 +43,6 @@ const sharedUint8Array = new Uint8Array(sharedArrayBuffer);
 //* sharedUint8Array[1] = ChildThread/readSwitch.js で更新されるDoorの状態[isOpened]: true(1)なら開いている
 //* sharedUint8Array[2] = ChildThread/isOwnerRegistered.js でオーナーが登録されている(customToken.jsonの存在可否)かの状態[isOwnerRegistered]: true(1)なら登録済み
 //* sharedUint8Array[3] = ChildThread/onAuthStateCheanged.js で更新されるログイン状態[isAuthStateLoggedIn]: true(1)ならログイン済み
-Atomics.store(sharedUint8Array, 0, false); // 初期値: isLocked = false
-Atomics.store(sharedUint8Array, 1, false); // 初期値: isOpened = false
-Atomics.store(sharedUint8Array, 2, false); // 初期値: isOwnerRegistered = false
-Atomics.store(sharedUint8Array, 3, false); // 初期値: isAuthStateLoggedIn = false
 
 //* カスタムトークンが存在するか(オーナーが登録されているか)監視する子スレッドを起動
 const isOwnerRegistered_Thread = new Worker(
