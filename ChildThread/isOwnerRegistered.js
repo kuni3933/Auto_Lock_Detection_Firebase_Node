@@ -6,6 +6,33 @@ import { workerData } from "worker_threads";
 
 // 共有メモリの設定
 const sharedUint8Array = new Uint8Array(workerData);
+function getIsLocked() {
+  Atomics.load(sharedUint8Array, 0);
+}
+function setIsLocked(bool) {
+  Atomics.store(sharedUint8Array, 0, bool);
+}
+
+function getIsOpened() {
+  Atomics.load(sharedUint8Array, 1);
+}
+function setIsOpened(bool) {
+  Atomics.store(sharedUint8Array, 1, bool);
+}
+
+function getIsOwnerRegistered() {
+  Atomics.load(sharedUint8Array, 2);
+}
+function setIsOwnerRegistered(bool) {
+  Atomics.store(sharedUint8Array, 2, bool);
+}
+
+function getIsAuthStateLoggedIn() {
+  Atomics.load(sharedUint8Array, 3);
+}
+function setIsAuthStateLoggedIn(bool) {
+  Atomics.store(sharedUint8Array, 3, bool);
+}
 
 // customTokenのパス
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -21,7 +48,7 @@ while (true) {
   // このスレッドで保持している状態変数と比較 && writeFlagがtrueか判定
   if (isOwnerRegistered != whileIsOwnerRegistered) {
     // 比較結果として違った場合は共有メモリに保存
-    Atomics.store(sharedUint8Array, 2, whileIsOwnerRegistered);
+    setIsOwnerRegistered(whileIsOwnerRegistered);
 
     // スレッドで保持している状態変数も更新
     isOwnerRegistered = whileIsOwnerRegistered;

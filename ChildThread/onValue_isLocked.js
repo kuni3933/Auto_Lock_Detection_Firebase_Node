@@ -1,15 +1,39 @@
 import { parentPort, workerData } from "worker_threads";
-import { onValue, set } from "firebase/database";
-import {
-  isLockedRef,
-  isLockedHistoryRef,
-  isLockedUserHistoryRef,
-} from "../lib/FirebaseInit.js";
+import { onValue } from "firebase/database";
+import { FieldValue } from "firebase/firestore";
+import { isLockedRef, raspPiSerialNumberDocRef } from "../lib/FirebaseInit.js";
 
 // 共有配列
 const sharedUint8Array = new Uint8Array(workerData);
+function getIsLocked() {
+  Atomics.load(sharedUint8Array, 0);
+}
+function setIsLocked(bool) {
+  Atomics.store(sharedUint8Array, 0, bool);
+}
 
-// isLockedをリッスン
+function getIsOpened() {
+  Atomics.load(sharedUint8Array, 1);
+}
+function setIsOpened(bool) {
+  Atomics.store(sharedUint8Array, 1, bool);
+}
+
+function getIsOwnerRegistered() {
+  Atomics.load(sharedUint8Array, 2);
+}
+function setIsOwnerRegistered(bool) {
+  Atomics.store(sharedUint8Array, 2, bool);
+}
+
+function getIsAuthStateLoggedIn() {
+  Atomics.load(sharedUint8Array, 3);
+}
+function setIsAuthStateLoggedIn(bool) {
+  Atomics.store(sharedUint8Array, 3, bool);
+}
+
+// Is_Lockedをリッスン
 onValue(isLockedRef, (snapshot) => {
   // ログ
   console.log("childThread: onValue_isLocked.js");
@@ -21,7 +45,7 @@ onValue(isLockedRef, (snapshot) => {
   console.log(`{ onValue_isLocked: ${onValue_isLocked} }`);
 
   if (onValue_isLocked == true || onValue_isLocked == false) {
-    Atomics.store(sharedUint8Array, 0, onValue_isLocked);
+    setIsLocked(onValue_isLocked);
   }
 });
 
@@ -33,11 +57,17 @@ parentPort.on("message", (msg) => {
     console.log(`onValue_isLocked.js: Received { isLocked: ${isLocked} }`);
 
     // 共有メモリの値を更新
-    Atomics.store(sharedUint8Array, 0, isLocked);
+    setIsLocked(isLocked);
 
+    // 非ログイン状態だったら1秒待機してログインを待つ
+    if (getIsAuthStateLoggedIn() == false) {
+      sleep.sleep(1);
+    }
     // Realtim Databaseに書き込み
-    set(isLockedRef, isLocked);
-    //set(isLockedHistoryRef,);
-    //set(isLockedUserHistoryRef,);
+    set(isLockedRef, isLocked).catch((err) => {
+      console.log(err);
+    });
+    // 履歴はまだ構造未定なので放置
+    //raspPiSerialNumberDocRef;
   }
 });

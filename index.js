@@ -37,15 +37,32 @@ if (!fs.existsSync(`${configDirPath}/Autolock_Time.json`)) {
 //* スレッド間で共有する配列を宣言(4Byte)
 // 参考1:https://stackoverflow.com/questions/51053222/node-js-worker-threads-shared-object-store
 // 参考2:https://note.affi-sapo-sv.com/js-sharedarraybuffer.php#title4
-//* sharedArrayBuffer[0] = ChildThread/onValue.jsで更新されるDBのIs_Lockedの状態[isLocked]: true(1)ならロック状態
-//* sharedArrayBuffer[1] = ChildThread/readSwitch.js で更新されるDoorの状態[isOpened]: true(1)なら開いている
-//* sharedArrayBuffer[2] = ChildThread/isOwnerRegistered.js でオーナーが登録されている(customToken.jsonの存在可否)かの状態[isOwnerRegistered]: true(1)なら登録済み
-const sharedArrayBuffer = new SharedArrayBuffer(6);
+const sharedArrayBuffer = new SharedArrayBuffer(8);
 const sharedUint8Array = new Uint8Array(sharedArrayBuffer);
-// 初期値設定
+//* sharedUint8Array[0] = ChildThread/onValue.jsで更新されるDBのIs_Lockedの状態[isLocked]: true(1)ならロック状態
+//* sharedUint8Array[1] = ChildThread/readSwitch.js で更新されるDoorの状態[isOpened]: true(1)なら開いている
+//* sharedUint8Array[2] = ChildThread/isOwnerRegistered.js でオーナーが登録されている(customToken.jsonの存在可否)かの状態[isOwnerRegistered]: true(1)なら登録済み
+//* sharedUint8Array[3] = ChildThread/onAuthStateCheanged.js で更新されるログイン状態[isAuthStateLoggedIn]: true(1)ならログイン済み
 Atomics.store(sharedUint8Array, 0, false); // 初期値: isLocked = false
 Atomics.store(sharedUint8Array, 1, false); // 初期値: isOpened = false
 Atomics.store(sharedUint8Array, 2, false); // 初期値: isOwnerRegistered = false
+Atomics.store(sharedUint8Array, 3, false); // 初期値: isAuthStateLoggedIn = false
+
+//* カスタムトークンが存在するか(オーナーが登録されているか)監視する子スレッドを起動
+const isOwnerRegistered_Thread = new Worker(
+  `${__dirname}/ChildThread/isOwnerRegistered.js`,
+  {
+    workerData: sharedArrayBuffer,
+  }
+);
+
+//* ログイン状態を監視/更新する子スレッドを起動
+const onAuthStateChanged_Thread = new Worker(
+  `${__dirname}/ChildThread/onAuthStateChanged.js`,
+  {
+    workerData: sharedArrayBuffer,
+  }
+);
 
 //* ロック/アンロック角度設定の読込/更新を行う子スレッドを起動
 const onValue_angle_Thread = new Worker(
@@ -68,17 +85,15 @@ const onValue_isLocked_Thread = new Worker(
   { workerData: sharedArrayBuffer }
 );
 
-//* readSwitchのisOpenedを読込/更新する子スレッドを起動
-const readSwitch_Thread = new Worker(`${__dirname}/ChildThread/readSwitch.js`, {
-  workerData: sharedArrayBuffer,
-});
+//* RealtimeDatabaseのIs_Onlineを読込/更新する子スレッドを起動
+const onValue_isOnline_Thread = new Worker(
+  `${__dirname}/ChildThread/onValue_isLocked.js`,
+  { workerData: sharedArrayBuffer }
+);
 
-//* カスタムトークンが存在するか(オーナーが登録されているか)監視する子スレッドを起動
-const isOwnerRegistered_Thread = new Worker(
-  `${__dirname}/ChildThread/isOwnerRegistered.js`,
-  {
-    workerData: sharedArrayBuffer,
-  }
+//* readSwitchのisOpenedを読込/更新する子スレッドを起動
+const readSwitch_Thread = new Worker(
+  `${__dirname}/ChildThread/onValue_isOnline.js`
 );
 
 //* メイン処理を起動
