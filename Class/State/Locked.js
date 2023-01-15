@@ -28,7 +28,7 @@ export class Locked extends State {
         fs.readFileSync(`${configDirPath}/Angle.json`, "utf-8")
       );
       // ログ
-      console.log(`${JSON.stringify(Angle)}`);
+      console.log(`${JSON.stringify(Angle, null, 2)}`);
       return Angle;
     })();
 

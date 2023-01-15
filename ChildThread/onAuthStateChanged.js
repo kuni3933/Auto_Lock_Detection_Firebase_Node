@@ -114,7 +114,10 @@ onAuthStateChanged(auth, async (user) => {
         const customTokenJson = JSON.parse(fs.readFileSync(customTokenPath));
         customToken = JSON.parse(response.body)["customToken"];
         customTokenJson["customToken"] = customToken;
-        fs.writeFileSync(customTokenPath, JSON.stringify(customTokenJson));
+        fs.writeFileSync(
+          customTokenPath,
+          JSON.stringify(customTokenJson, null, 2)
+        );
         break;
       } else {
         sleep.sleep(5);

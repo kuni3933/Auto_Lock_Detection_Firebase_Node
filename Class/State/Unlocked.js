@@ -29,7 +29,7 @@ export class Unlocked extends State {
         fs.readFileSync(`${configDirPath}/Angle.json`, "utf-8")
       );
       // ログ
-      console.log(`${JSON.stringify(Angle)}`);
+      console.log(`${JSON.stringify(Angle, null, 2)}`);
       return Angle;
     })();
 
@@ -48,7 +48,7 @@ export class Unlocked extends State {
         fs.readFileSync(`${configDirPath}/Autolock_Sensor.json`, "utf-8")
       );
       //ログ
-      console.log(`${JSON.stringify(Autolock_Sensor)}`);
+      console.log(`${JSON.stringify(Autolock_Sensor, null, 2)}`);
       return Autolock_Sensor.Autolock_Sensor;
     })();
 

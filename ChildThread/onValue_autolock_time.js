@@ -13,15 +13,16 @@ onValue(autolockTimeRef, (snapshot) => {
   // ログ
   console.log("childThread: onValue_autolock_time.js");
 
-  // 変更値[オブジェクト]をonValue_angleに格納
-  const onValue_autolock_time = snapshot.val();
+  // 変更値[オブジェクト]をjsonObj["Autolock_Time"]に格納
+  const jsonObj = { Autolock_Time: undefined };
+  jsonObj["Autolock_Time"] = snapshot.val();
 
   // ログ
-  console.log(`{ onValue_autolock_time[sec]: ${onValue_autolock_time} }`);
+  console.log(`{ onValue_autolock_time[sec]: ${jsonObj["Autolock_Time"]} }`);
 
   // Config/Autolock_Time.json への書き込み
   fs.writeFileSync(
     `${configDirPath}/Autolock_Time.json`,
-    `{"Autolock_Time": ${onValue_autolock_time}}`
+    JSON.stringify(jsonObj, null, 2)
   );
 });

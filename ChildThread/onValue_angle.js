@@ -17,11 +17,11 @@ onValue(angleRef, (snapshot) => {
   const onValue_angle = snapshot.val();
 
   // ログ
-  console.log(`{ onValue_angle: ${JSON.stringify(onValue_angle)} }`);
+  console.log(`{ onValue_angle: ${JSON.stringify(onValue_angle, null, 2)} }`);
 
   // Config/Angle.json への書き込み
   fs.writeFileSync(
     `${configDirPath}/Angle.json`,
-    JSON.stringify(onValue_angle)
+    JSON.stringify(onValue_angle, null, 2)
   );
 });

@@ -14,16 +14,20 @@ onValue(autolockSensorRef, (snapshot) => {
   console.log("childThread: onValue_autolock_sensor.js");
 
   // 変更値をisLockedに格納
-  let onValue_autolock_sensor = snapshot.val();
+  const jsonObj = { Autolock_Sensor: undefined };
+  jsonObj["Autolock_Sensor"] = snapshot.val();
 
   // ログ
-  console.log(`{ onValue_autolock_sensor: ${onValue_autolock_sensor} }`);
+  console.log(`{ onValue_autolock_sensor: ${jsonObj["Autolock_Sensor"]} }`);
 
   // Config/Autolock_Sensor.json への書き込み
-  if (onValue_autolock_sensor == true || onValue_autolock_sensor == false) {
+  if (
+    jsonObj["Autolock_Sensor"] == true ||
+    jsonObj["Autolock_Sensor"] == false
+  ) {
     fs.writeFileSync(
       `${configDirPath}/Autolock_Sensor.json`,
-      `{"Autolock_Sensor": ${onValue_autolock_sensor}}`
+      JSON.stringify(jsonObj, null, 2)
     );
   }
 });
