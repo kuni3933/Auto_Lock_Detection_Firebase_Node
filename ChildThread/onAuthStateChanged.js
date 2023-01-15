@@ -74,12 +74,16 @@ onAuthStateChanged(auth, async (user) => {
       };
 
       // APIにPOST
-      const response = await got.post(
-        `https://securetoken.googleapis.com/v1/token?key=${process.env.FIREBASE_apiKey}`,
-        {
-          json: reqJson,
-        }
-      );
+      const response = await got
+        .post(
+          `https://securetoken.googleapis.com/v1/token?key=${process.env.FIREBASE_apiKey}`,
+          {
+            json: reqJson,
+          }
+        )
+        .catch((err) => {
+          console.log(err);
+        });
       //console.log(response);
 
       if (response.statusCode == 200) {
@@ -95,11 +99,15 @@ onAuthStateChanged(auth, async (user) => {
     // 更新したidTokenでcustomトークンを再生成
     while (true) {
       // APIにPOST
-      const response = await got.post(`${process.env.API_URL}/v1/token`, {
-        form: {
-          Token: idToken,
-        },
-      });
+      const response = await got
+        .post(`${process.env.API_URL}/v1/token`, {
+          form: {
+            Token: idToken,
+          },
+        })
+        .catch((err) => {
+          console.log(err);
+        });
       //console.log(response);
 
       if (response.statusCode == 200) {
