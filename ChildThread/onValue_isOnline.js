@@ -46,9 +46,10 @@ onValue(isOnlineRef, (snapshot) => {
   // ログ
   console.log(`{ onValue_isOnline: ${onValue_isOnline} }`);
 
-  // 非ログイン状態だったら1秒待機してログインを待つ
+  // 非ログイン状態だったら2秒待機してログインを待つ
   if (getIsAuthStateLoggedIn() == false) {
-    sleep.sleep(1);
+    const Time = Date.now();
+    while (Date.now() - Time < 2000) {}
   }
 
   if (onValue_isOnline == false) {

@@ -57,9 +57,10 @@ while (true) {
     // スレッドで保持している状態変数も更新
     isOpened = whileIsOpened;
 
-    // 非ログイン状態だったら1秒待機してログインを待つ
+    // 非ログイン状態だったら2秒待機してログインを待つ
     if (getIsAuthStateLoggedIn() == false) {
-      sleep.sleep(1);
+      const Time = Date.now();
+      while (Date.now() - Time < 2000) {}
     }
     // RealtimeDatabaseに保存
     set(isOpenedRef, whileIsOpened).catch((err) => {

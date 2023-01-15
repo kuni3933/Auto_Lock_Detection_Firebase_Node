@@ -1,7 +1,6 @@
 import * as fs from "fs";
 import got from "got";
 import path from "path";
-import sleep from "sleep";
 import { onAuthStateChanged, signInWithCustomToken } from "firebase/auth";
 import { auth } from "../lib/FirebaseInit.js";
 import { fileURLToPath } from "url";
@@ -58,7 +57,9 @@ onAuthStateChanged(auth, async (user) => {
       if (getIsOwnerRegistered() == true) {
         break;
       }
-      //sleep.sleep(2);
+      // 2秒スリープ
+      const Time = Date.now();
+      while (Date.now() - Time < 2000) {}
     }
 
     // 更新したidToken
@@ -90,7 +91,9 @@ onAuthStateChanged(auth, async (user) => {
         idToken = JSON.parse(response.body)["id_token"];
         break;
       } else {
-        sleep.sleep(5);
+        // 2秒スリープ
+        const Time = Date.now();
+        while (Date.now() - Time < 2000) {}
       }
     }
 
@@ -120,7 +123,9 @@ onAuthStateChanged(auth, async (user) => {
         );
         break;
       } else {
-        sleep.sleep(5);
+        // 2秒スリープ
+        const Time = Date.now();
+        while (Date.now() - Time < 2000) {}
       }
     }
 

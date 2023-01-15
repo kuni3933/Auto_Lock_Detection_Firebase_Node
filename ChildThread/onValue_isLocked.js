@@ -59,9 +59,10 @@ parentPort.on("message", (msg) => {
     // 共有メモリの値を更新
     setIsLocked(isLocked);
 
-    // 非ログイン状態だったら1秒待機してログインを待つ
+    // 非ログイン状態だったら2秒待機してログインを待つ
     if (getIsAuthStateLoggedIn() == false) {
-      sleep.sleep(1);
+      const Time = Date.now();
+      while (Date.now() - Time < 2000) {}
     }
     // Realtim Databaseに書き込み
     set(isLockedRef, isLocked).catch((err) => {

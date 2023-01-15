@@ -1,6 +1,5 @@
 import * as fs from "fs";
 import path from "path";
-import sleep from "sleep";
 import { fileURLToPath } from "url";
 import { workerData } from "worker_threads";
 
@@ -56,6 +55,7 @@ while (true) {
     // ログ
     console.log(`isOwnerRegistered: ${whileIsOwnerRegistered}`);
   }
-  // スリープ
-  sleep.sleep(2);
+  // 2秒スリープ
+  const Time = Date.now();
+  while (Date.now() - Time < 2000) {}
 }
