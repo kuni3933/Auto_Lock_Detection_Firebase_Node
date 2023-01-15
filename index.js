@@ -96,6 +96,15 @@ const readSwitch_Thread = new Worker(`${__dirname}/ChildThread/readSwitch.js`, {
 //* "Config/customToken.json" の存在確認が取れるまで(オーナー登録がされるまで)無限ループ
 const door = await Door.initDoor(sharedArrayBuffer, onValue_isLocked_Thread);
 while (true) {
+  console.log(
+    `${Atomics.load(sharedUint8Array, 0)} ${Atomics.load(
+      sharedUint8Array,
+      1
+    )} ${Atomics.load(sharedUint8Array, 2)} ${Atomics.load(
+      sharedUint8Array,
+      3
+    )}`
+  );
   // カスタムトークンがある(オーナーが登録されている)間はdoor.update_state()
   if (Atomics.load(sharedUint8Array, 2) == true) {
     door.update_state();

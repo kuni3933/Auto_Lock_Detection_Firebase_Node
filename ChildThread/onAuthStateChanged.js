@@ -2,12 +2,8 @@ import * as fs from "fs";
 import got from "got";
 import path from "path";
 import sleep from "sleep";
-import {
-  GoogleAuthProvider,
-  onAuthStateChanged,
-  signInWithCredential,
-} from "firebase/auth";
-import { auth } from "../lib/FirebaseInit";
+import { onAuthStateChanged, signInWithCustomToken } from "firebase/auth";
+import { auth } from "../lib/FirebaseInit.js";
 import { fileURLToPath } from "url";
 import { workerData } from "worker_threads";
 
@@ -52,7 +48,7 @@ onAuthStateChanged(auth, async (user) => {
     setIsAuthStateLoggedIn(true);
   }
 
-  // ログイン状態が切れた場合はcustomTokne.js["refToken"]でトークンを更新
+  // ログイン状態が切れた場合はcustomTokne.js["refToken"]でトークンを更新してcustomTokenを再生成
   else {
     // 共有メモリの値を更新
     setIsAuthStateLoggedIn(false);
@@ -65,42 +61,59 @@ onAuthStateChanged(auth, async (user) => {
       //sleep.sleep(2);
     }
 
-    // APIレスポンス
-    const response = undefined;
-
-    // Refreshトークンでトークンを更新出来るまで無限ループ
+    // 更新したidToken
+    let idToken = undefined;
+    // Refreshトークンでidトークンを更新出来るまで無限ループ
     while (true) {
       // APIリクエスト時のjson配列
       const reqJson = {
         grant_type: "refresh_token",
         refresh_token: `${
-          JSON.parse(fs.readFileSync(customTokenPath))["refresh_token"]
+          JSON.parse(fs.readFileSync(customTokenPath))["refreshToken"]
         }`,
       };
 
       // APIにPOST
-      response = await got.post(
+      const response = await got.post(
         `https://securetoken.googleapis.com/v1/token?key=${process.env.FIREBASE_apiKey}`,
         {
           json: reqJson,
         }
       );
-      console.log(response);
+      //console.log(response);
 
       if (response.statusCode == 200) {
-        fs.writeFileSync(customTokenPath, response.body);
+        idToken = JSON.parse(response.body)["id_token"];
         break;
       } else {
         sleep.sleep(5);
       }
     }
 
-    // idTokenからcredentialインスタンスを生成
-    const credential = GoogleAuthProvider.credential(
-      JSON.parse(response.body)["idToken"]
-    );
+    // 再生成したcustomToken
+    let customToken = undefined;
+    // 更新したidTokenでcustomトークンを再生成
+    while (true) {
+      // APIにPOST
+      const response = await got.post(`${process.env.API_URL}/v1/token`, {
+        form: {
+          Token: idToken,
+        },
+      });
+      //console.log(response);
+
+      if (response.statusCode == 200) {
+        const customTokenJson = JSON.parse(fs.readFileSync(customTokenPath));
+        customToken = JSON.parse(response.body)["customToken"];
+        customTokenJson["customToken"] = customToken;
+        fs.writeFileSync(customTokenPath, JSON.stringify(customTokenJson));
+        break;
+      } else {
+        sleep.sleep(5);
+      }
+    }
 
     // ログイン
-    signInWithCredential(auth, credential);
+    signInWithCustomToken(auth, customToken);
   }
 });
