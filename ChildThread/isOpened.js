@@ -1,4 +1,3 @@
-import sleep from "sleep";
 import { isOpenedRef } from "../lib/FirebaseInit.js";
 import { Gpio } from "pigpio";
 import { set } from "firebase/database";
@@ -47,10 +46,10 @@ const readSwitch = new Gpio(PIN, {
 let isOpened = false;
 while (true) {
   // このwhile内で一時保持する変数 whileIsOpened
-  const whileIsOpened = readSwitch.digitalRead();
+  const whileIsOpened = Boolean(readSwitch.digitalRead());
 
   // このスレッドで保持している状態変数と比較 && writeFlagがtrueか判定
-  if (isOpened != whileIsOpened && getIsOwnerRegistered() == true) {
+  if (isOpened != whileIsOpened && getIsOwnerRegistered()) {
     // 比較結果として違った場合は共有メモリに保存
     setIsOpened(whileIsOpened);
 

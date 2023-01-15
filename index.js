@@ -44,6 +44,11 @@ const sharedUint8Array = new Uint8Array(sharedArrayBuffer);
 //* sharedUint8Array[2] = ChildThread/isOwnerRegistered.js でオーナーが登録されている(customToken.jsonの存在可否)かの状態[isOwnerRegistered]: true(1)なら登録済み
 //* sharedUint8Array[3] = ChildThread/onAuthStateCheanged.js で更新されるログイン状態[isAuthStateLoggedIn]: true(1)ならログイン済み
 
+//* readSwitchのisOpenedを読込/更新する子スレッドを起動
+const isOpened_Thread = new Worker(`${__dirname}/ChildThread/isOpened.js`, {
+  workerData: sharedArrayBuffer,
+});
+
 //* カスタムトークンが存在するか(オーナーが登録されているか)監視する子スレッドを起動
 const isOwnerRegistered_Thread = new Worker(
   `${__dirname}/ChildThread/isOwnerRegistered.js`,
@@ -86,11 +91,6 @@ const onValue_isOnline_Thread = new Worker(
   `${__dirname}/ChildThread/onValue_isOnline.js`,
   { workerData: sharedArrayBuffer }
 );
-
-//* readSwitchのisOpenedを読込/更新する子スレッドを起動
-const readSwitch_Thread = new Worker(`${__dirname}/ChildThread/readSwitch.js`, {
-  workerData: sharedArrayBuffer,
-});
 
 //* メイン処理を起動
 //* "Config/customToken.json" の存在確認が取れるまで(オーナー登録がされるまで)無限ループ
