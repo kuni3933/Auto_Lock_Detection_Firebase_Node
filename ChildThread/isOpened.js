@@ -48,9 +48,20 @@ while (true) {
   // このwhile内で一時保持する変数 whileIsOpened
   const whileIsOpened = Boolean(readSwitch.digitalRead());
 
-  // このスレッドで保持している状態変数と比較 && writeFlagがtrueか判定
-  if (isOpened != whileIsOpened && getIsOwnerRegistered()) {
-    // 比較結果として違った場合は共有メモリに保存
+  // 0.500sec待機
+  const Time = Date.now();
+  while (Date.now() - Time < 500) {}
+
+  //*/ スレッド内状態変数[isOpened] と while内取得値[whileIsOpened] が異値 &&
+  //*/ 0.500secスリープ後も while内取得値[whileIsOpened] と 現在の状態 が 同値 &&
+  //*/ オーナーが登録済み
+  // の場合
+  if (
+    isOpened != whileIsOpened &&
+    whileIsOpened == Boolean(readSwitch.digitalRead()) &&
+    getIsOwnerRegistered()
+  ) {
+    // 共有メモリに保存
     setIsOpened(whileIsOpened);
 
     // スレッドで保持している状態変数も更新
@@ -61,8 +72,9 @@ while (true) {
       const Time = Date.now();
       while (Date.now() - Time < 2000) {}
     }
+
     // RealtimeDatabaseに保存
-    set(isOpenedRef, whileIsOpened).catch((err) => {
+    await set(isOpenedRef, whileIsOpened).catch((err) => {
       console.log(err);
     });
 
