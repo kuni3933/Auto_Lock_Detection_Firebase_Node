@@ -30,7 +30,7 @@ export class Door {
       })
       .catch((err) => {
         console.log(err);
-        return "83ed5c72";
+        return "SerialNumber_3";
       });
 
     const door = new Door(
