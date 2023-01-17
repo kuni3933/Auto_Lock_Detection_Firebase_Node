@@ -1,6 +1,6 @@
 import { parentPort, workerData } from "worker_threads";
 import { onValue, set } from "firebase/database";
-import { arrayUnion, serverTimestamp, updateDoc } from "firebase/firestore";
+import { arrayUnion, Timestamp, updateDoc } from "firebase/firestore";
 import { isLockedRef, raspPiSerialNumberDocRef } from "../lib/FirebaseInit.js";
 
 // 共有配列
@@ -73,7 +73,7 @@ parentPort.on("message", async (msg) => {
     await updateDoc(raspPiSerialNumberDocRef, {
       keyStateLog: arrayUnion({
         keyState: isLocked,
-        timeStamp: serverTimestamp(),
+        timeStamp: Timestamp.now(),
         userSerialNo: Number(isLocked).toString(),
       }),
     });
