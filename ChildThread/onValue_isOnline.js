@@ -33,9 +33,9 @@ function setIsAuthStateLoggedIn(bool) {
 }
 
 // Is_Onlineをリッスン
-onValue(isOnlineRef, (snapshot) => {
+onValue(isOnlineRef, async (snapshot) => {
   // ネットワーク接続が切断状態になったら'Is_Online'をfalseにする
-  onDisconnect(isOnlineRef).set(false);
+  await onDisconnect(isOnlineRef).set(false);
 
   // ログ
   console.log("childThread: onValue_isOnline.js");
@@ -53,6 +53,6 @@ onValue(isOnlineRef, (snapshot) => {
   }
 
   if (onValue_isOnline == false) {
-    set(isOnlineRef, true);
+    await set(isOnlineRef, true);
   }
 });

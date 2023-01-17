@@ -64,18 +64,24 @@ parentPort.on("message", async (msg) => {
       const Time = Date.now();
       while (Date.now() - Time < 2000) {}
     }
-    // Realtim Databaseに書き込み
-    set(isLockedRef, isLocked).catch((err) => {
-      console.log(err);
-    });
 
-    // Firestoreに履歴を書き込み
-    await updateDoc(raspPiSerialNumberDocRef, {
-      keyStateLog: arrayUnion({
-        keyState: isLocked,
-        timeStamp: Timestamp.now(),
-        userSerialNo: Number(isLocked).toString(),
+    // isLocked,keyStateLog 双方の書込み
+    Promise.all([
+      // Realtim Databaseに書き込み
+      set(isLockedRef, isLocked).catch((err) => {
+        console.log(err);
       }),
-    });
+
+      // Firestoreに履歴を書き込み
+      updateDoc(raspPiSerialNumberDocRef, {
+        keyStateLog: arrayUnion({
+          keyState: isLocked,
+          timeStamp: Timestamp.now(),
+          userSerialNo: Number(isLocked).toString(),
+        }),
+      }).catch((err) => {
+        console.log(err);
+      }),
+    ]);
   }
 });
