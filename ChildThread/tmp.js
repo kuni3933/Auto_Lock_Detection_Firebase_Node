@@ -1,7 +1,8 @@
-import { set } from "firebase/database";
+import { set, get, onValue } from "firebase/database";
 import {
   addDoc,
   arrayUnion,
+  doc,
   getDocs,
   orderBy,
   query,
@@ -10,23 +11,23 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import {
+  dotInfoConnectedRef,
   isLockedRef,
   keyStateLogColRef,
   raspPiSerialNumberDocRef,
 } from "../lib/FirebaseInit.js";
 
-const isLocked = true;
-
-// ログ
+const isLocked = false;
 console.log(`onValue_isLocked.js: Received { isLocked: ${isLocked} }`);
 
+//console.log(doc(keyStateLogColRef).id);
+/*
 // isLocked,keyStateLog 双方の書込み
 Promise.all([
   // Realtim Databaseに書き込み
   set(isLockedRef, isLocked).catch((err) => {
     console.log(err);
   }),
-
   // テスト
   addDoc(keyStateLogColRef, {
     keyState: isLocked,
@@ -35,7 +36,9 @@ Promise.all([
   }).catch((err) => {
     console.log(err);
   }),
-
+]);
+*/
+/*
   // Firestoreに履歴を書き込み
   updateDoc(raspPiSerialNumberDocRef, {
     keyStateLog: arrayUnion({
@@ -65,3 +68,10 @@ keyStateLogDocs.forEach((doc) => {
     //data.userSerialNo
   );
 });
+*/
+
+/*
+onValue(dotInfoConnectedRef, (snapshot) => {
+  console.log(snapshot.val());
+});
+*/

@@ -1,9 +1,9 @@
 import { parentPort, workerData } from "worker_threads";
 import { onValue, set } from "firebase/database";
-import { arrayUnion, Timestamp, updateDoc } from "firebase/firestore";
+import { addDoc, serverTimestamp, Timestamp } from "firebase/firestore";
 import { isLockedRef, raspPiSerialNumberDocRef } from "../lib/FirebaseInit.js";
 
-// 共有配列
+//* 共有メモリの設定
 const sharedUint8Array = new Uint8Array(workerData);
 function getIsLocked() {
   return Atomics.load(sharedUint8Array, 0);
@@ -19,18 +19,25 @@ function setIsOpened(bool) {
   Atomics.store(sharedUint8Array, 1, bool);
 }
 
-function getIsOwnerRegistered() {
+function getIsConnected() {
   return Atomics.load(sharedUint8Array, 2);
 }
+function setIsConnected(bool) {
+  return Atomics.store(sharedUint8Array, 2, bool);
+}
+
+function getIsOwnerRegistered() {
+  return Atomics.load(sharedUint8Array, 3);
+}
 function setIsOwnerRegistered(bool) {
-  Atomics.store(sharedUint8Array, 2, bool);
+  Atomics.store(sharedUint8Array, 3, bool);
 }
 
 function getIsAuthStateLoggedIn() {
-  return Atomics.load(sharedUint8Array, 3);
+  return Atomics.load(sharedUint8Array, 4);
 }
 function setIsAuthStateLoggedIn(bool) {
-  Atomics.store(sharedUint8Array, 3, bool);
+  Atomics.store(sharedUint8Array, 4, bool);
 }
 
 // Is_Lockedをリッスン
@@ -65,23 +72,30 @@ parentPort.on("message", async (msg) => {
       while (Date.now() - Time < 2000) {}
     }
 
-    // isLocked,keyStateLog 双方の書込み
-    Promise.all([
-      // Realtim Databaseに書き込み
-      set(isLockedRef, isLocked).catch((err) => {
-        console.log(err);
-      }),
+    // RealtimeDatabase_isLockedに書き込み
+    set(isLockedRef, isLocked).catch((err) => {
+      console.log(err);
+    });
 
-      // Firestoreに履歴を書き込み
-      updateDoc(raspPiSerialNumberDocRef, {
-        keyStateLog: arrayUnion({
-          keyState: isLocked,
-          timeStamp: Timestamp.now(),
-          userSerialNo: Number(isLocked).toString(),
-        }),
+    // Firestore_keyStateLogCollectionに新規履歴docを追加
+    if (getIsConnected()) {
+      // Firebaseとのネットワークが確立済みの場合はserverTimestamp()
+      addDoc(keyStateLogColRef, {
+        keyState: isLocked,
+        timeStamp: serverTimestamp(),
+        userSerialNo: Number(isLocked).toString(),
       }).catch((err) => {
         console.log(err);
-      }),
-    ]);
+      });
+    } else {
+      // Firebaseとのネットワークが未確立の場合はTimestamp.now()でローカルタイム
+      addDoc(keyStateLogColRef, {
+        keyState: isLocked,
+        timeStamp: Timestamp.now(),
+        userSerialNo: Number(isLocked).toString(),
+      }).catch((err) => {
+        console.log(err);
+      });
+    }
   }
 });

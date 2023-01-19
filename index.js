@@ -39,10 +39,11 @@ if (!fs.existsSync(`${configDirPath}/Autolock_Time.json`)) {
 // 参考2:https://note.affi-sapo-sv.com/js-sharedarraybuffer.php#title4
 const sharedArrayBuffer = new SharedArrayBuffer(8);
 const sharedUint8Array = new Uint8Array(sharedArrayBuffer);
-//* sharedUint8Array[0] = ChildThread/onValue.jsで更新されるDBのIs_Lockedの状態[isLocked]: true(1)ならロック状態
+//* sharedUint8Array[0] = ChildThread/onValue_isLocked.jsで更新されるDBのIs_Lockedの状態[isLocked]: true(1)ならロック状態
 //* sharedUint8Array[1] = ChildThread/readSwitch.js で更新されるDoorの状態[isOpened]: true(1)なら開いている
-//* sharedUint8Array[2] = ChildThread/isOwnerRegistered.js でオーナーが登録されている(customToken.jsonの存在可否)かの状態[isOwnerRegistered]: true(1)なら登録済み
-//* sharedUint8Array[3] = ChildThread/onAuthStateCheanged.js で更新されるログイン状態[isAuthStateLoggedIn]: true(1)ならログイン済み
+//* sharedUint8Array[2] = ChildThread/onValue_isLocked.jsで更新されるFirebaseとの接続状態[isConnected]: true(1)なら接続状態
+//* sharedUint8Array[3] = ChildThread/isOwnerRegistered.js でオーナーが登録されている(customToken.jsonの存在可否)かの状態[isOwnerRegistered]: true(1)なら登録済み
+//* sharedUint8Array[4] = ChildThread/onAuthStateCheanged.js で更新されるログイン状態[isAuthStateLoggedIn]: true(1)ならログイン済み
 
 //* readSwitchのisOpenedを読込/更新する子スレッドを起動
 const isOpened_Thread = new Worker(`${__dirname}/ChildThread/isOpened.js`, {

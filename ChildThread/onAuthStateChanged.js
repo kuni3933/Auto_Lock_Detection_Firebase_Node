@@ -22,18 +22,25 @@ function setIsOpened(bool) {
   Atomics.store(sharedUint8Array, 1, bool);
 }
 
-function getIsOwnerRegistered() {
+function getIsConnected() {
   return Atomics.load(sharedUint8Array, 2);
 }
+function setIsConnected(bool) {
+  return Atomics.store(sharedUint8Array, 2, bool);
+}
+
+function getIsOwnerRegistered() {
+  return Atomics.load(sharedUint8Array, 3);
+}
 function setIsOwnerRegistered(bool) {
-  Atomics.store(sharedUint8Array, 2, bool);
+  Atomics.store(sharedUint8Array, 3, bool);
 }
 
 function getIsAuthStateLoggedIn() {
-  return Atomics.load(sharedUint8Array, 3);
+  return Atomics.load(sharedUint8Array, 4);
 }
 function setIsAuthStateLoggedIn(bool) {
-  Atomics.store(sharedUint8Array, 3, bool);
+  Atomics.store(sharedUint8Array, 4, bool);
 }
 
 // customTokenのパス
