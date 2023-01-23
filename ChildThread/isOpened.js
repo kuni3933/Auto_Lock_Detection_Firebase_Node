@@ -1,10 +1,7 @@
+import { LcdDisplayClient } from "../Class/LcdDisplayClient";
 import { isOpenedRef } from "../lib/FirebaseInit.js";
-import { exec } from "child_process";
 import { set } from "firebase/database";
-import { existsSync } from "fs";
 import { Gpio } from "pigpio";
-import { dirname } from "path";
-import { fileURLToPath } from "url";
 import { workerData } from "worker_threads";
 
 //* 共有メモリの設定
@@ -44,12 +41,8 @@ function setIsAuthStateLoggedIn(bool) {
   Atomics.store(sharedUint8Array, 4, bool);
 }
 
-//* LCD.pyのパス
-// このファイルのパス
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-// クライアントリポジトリの相対パス
-const lcdPythonPath = `${__dirname}/../../TeamD_RaspPi/LCD.py`;
-//console.log(`lcdPythonPath: ${lcdPythonPath}`);
+// LcdDisplayClientインスタンスを生成
+const LcdDisplayClient = new LcdDisplayClient();
 
 // リードスイッチのGPIO(PIN) = 11
 const PIN = 11;
@@ -80,11 +73,9 @@ while (true) {
     getIsOwnerRegistered()
   ) {
     if (whileIsOpened == false) {
-      const command = "python ${lcdPythonPath} OPEN";
-      exec(command);
+      LcdDisplayClient.Output("OPEN");
     } else {
-      const command = "python ${lcdPythonPath} CLOSE";
-      exec(command);
+      LcdDisplayClient.Output("CLOSE");
     }
     // 共有メモリに保存
     setIsOpened(whileIsOpened);
