@@ -1,5 +1,4 @@
-import sleep from "sleep";
-import { existsSync } from "fs";
+import { existsSync, writeFileSync } from "fs";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
 import { Worker } from "worker_threads";
@@ -103,13 +102,14 @@ while (true) {
     )} ${Atomics.load(sharedUint8Array, 4)}`
   );
   // カスタムトークンがある(オーナーが登録されている)間はdoor.update_state()
-  if (Atomics.load(sharedUint8Array, 2) == true) {
+  if (Atomics.load(sharedUint8Array, 3) == true) {
     door.update_state();
   }
   // 存在しなかったらスリープ
   else {
     // スリープ
-    sleep.sleep(5);
+    const Time = Date.now();
+    while (Date.now() - Time < 5000) {}
   }
 }
 
