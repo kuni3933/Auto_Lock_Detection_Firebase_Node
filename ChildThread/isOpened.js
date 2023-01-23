@@ -1,4 +1,4 @@
-import { LcdDisplayClient } from "../Class/LcdDisplayClient";
+import { LcdDisplayClient } from "../Class/LcdDisplayClient.js";
 import { isOpenedRef } from "../lib/FirebaseInit.js";
 import { set } from "firebase/database";
 import { Gpio } from "pigpio";
@@ -42,7 +42,7 @@ function setIsAuthStateLoggedIn(bool) {
 }
 
 // LcdDisplayClientインスタンスを生成
-const LcdDisplayClient = new LcdDisplayClient();
+const lcdDisplayClient = new LcdDisplayClient();
 
 // リードスイッチのGPIO(PIN) = 11
 const PIN = 11;
@@ -73,9 +73,9 @@ while (true) {
     getIsOwnerRegistered()
   ) {
     if (whileIsOpened == false) {
-      LcdDisplayClient.Output("OPEN");
+      lcdDisplayClient.Output("OPEN");
     } else {
-      LcdDisplayClient.Output("CLOSE");
+      lcdDisplayClient.Output("CLOSE");
     }
     // 共有メモリに保存
     setIsOpened(whileIsOpened);

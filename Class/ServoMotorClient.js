@@ -1,4 +1,4 @@
-import { LcdDisplayClient } from "./LcdDisplayClient";
+import { LcdDisplayClient } from "./LcdDisplayClient.js";
 import { exec } from "child_process";
 import { dirname } from "path";
 import { fileURLToPath } from "url";

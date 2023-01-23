@@ -1,5 +1,5 @@
+import { raspPiSerialNumber } from "../lib/FirebaseInit.js";
 import { Unlocked } from "./State/Unlocked.js";
-import { readFile } from "fs/promises";
 
 export class Door {
   // Property
@@ -24,18 +24,6 @@ export class Door {
   }
 
   static async initDoor(sharedArrayBuffer, onValue_isLocked_Thread) {
-    const raspPiSerialNumber = await readFile(
-      "/sys/firmware/devicetree/base/serial-number",
-      { encoding: "utf-8" }
-    )
-      .then((raspPiSerialNumber) => {
-        return raspPiSerialNumber;
-      })
-      .catch((err) => {
-        console.log(err);
-        return "SerialNumber_3";
-      });
-
     const door = new Door(
       raspPiSerialNumber,
       sharedArrayBuffer,
