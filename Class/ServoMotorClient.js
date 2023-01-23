@@ -1,6 +1,6 @@
-import * as fs from "fs";
-import path from "path";
-import { execSync } from "child_process";
+import { exec } from "child_process";
+import { existsSync } from "fs";
+import { dirname } from "path";
 import { fileURLToPath } from "url";
 
 export class ServoMotorClient {
@@ -11,7 +11,7 @@ export class ServoMotorClient {
   constructor() {
     //* サーボモータークライアントリポジトリのパス
     //このファイルのパス
-    const __dirname = path.dirname(fileURLToPath(import.meta.url));
+    const __dirname = dirname(fileURLToPath(import.meta.url));
     //クライアントリポジトリの相対パス
     const servoDirPath = `${__dirname}/../../TeamD_RaspPi`;
     //console.log(`servoDirPath: ${servoDirPath}`);
@@ -22,15 +22,21 @@ export class ServoMotorClient {
   //* メソッド
   Turn(angle, state) {
     // クライアントリポジトリが存在した場合
-    if (fs.existsSync(this.Path)) {
+    if (existsSync(this.Path)) {
       try {
         // コマンドを組み立てる
-        const command = `python ${this.Path}/index.py ${angle} ${state}`;
+        const commandDisplay = `python ${this.Path}/LCD.py ${state}`;
+        const commandServo = `python ${this.Path}/index.py ${angle} ${state}`;
 
         // コマンドを実行してstdoutをログ出力
-        const stdout = execSync(command);
-        console.log(`execute => ${command}`);
-        console.log(`stdout: ${stdout.toString()}`);
+        console.log(
+          `execute => ${commandDisplay}\n`,
+          `stdout: ${exec(commandDisplay).toString()}\n`
+        );
+        console.log(
+          `execute => ${commandServo}\n`,
+          `stdout: ${exec(commandServo).toString()}\n`
+        );
       } catch (error) {
         console.log(`error: ${error.toString()}`);
         console.log(`stderr: ${error.stderr.toString()}`);

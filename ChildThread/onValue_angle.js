@@ -1,11 +1,11 @@
-import * as fs from "fs";
-import path from "path";
-import { fileURLToPath } from "url";
-import { onValue } from "firebase/database";
 import { angleRef } from "../lib/FirebaseInit.js";
+import { onValue } from "firebase/database";
+import { writeFileSync } from "fs";
+import { dirname } from "path";
+import { fileURLToPath } from "url";
 
 //* Configディレクトリのパス
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const __dirname = dirname(fileURLToPath(import.meta.url));
 const configDirPath = `${__dirname}/../../Config`;
 //console.log(`configDirPath: ${configDirPath}`);
 
@@ -20,8 +20,8 @@ onValue(angleRef, (snapshot) => {
   console.log(`{ onValue_angle: ${JSON.stringify(onValue_angle, null, 2)} }`);
 
   // Config/Angle.json への書き込み
-  fs.writeFileSync(
+  writeFileSync(
     `${configDirPath}/Angle.json`,
-    JSON.stringify(onValue_angle, null, 2)
+    JSON.stringify(onValue_angle, null, 2) + "\n"
   );
 });

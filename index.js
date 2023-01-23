@@ -1,36 +1,32 @@
-import * as fs from "fs";
-import path from "path";
 import sleep from "sleep";
+import { existsSync } from "fs";
+import { dirname } from "path";
 import { fileURLToPath } from "url";
 import { Worker } from "worker_threads";
 import { Door } from "./Class/Door.js";
 
 //* Configディレクトリのパス
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const __dirname = dirname(fileURLToPath(import.meta.url));
 const configDirPath = `${__dirname}/../Config`;
 //console.log(`configDirPath: ${configDirPath}`);
 
 //* Config/*.json の存在チェックと無かった場合のファイル作成
-// Configディレクトリ の存在確認と無かった場合のディレクトリ作成
-if (!fs.existsSync(configDirPath)) {
-  fs.mkdirSync(configDirPath);
-}
 // "Config/Angle.json" の存在確認と無かった場合のファイル作成
-if (!fs.existsSync(`${configDirPath}/Angle.json`)) {
-  fs.writeFileSync(`${configDirPath}/Angle.json`, '{"Lock": 0,"Unlock": 0}');
+if (!existsSync(`${configDirPath}/Angle.json`)) {
+  writeFileSync(`${configDirPath}/Angle.json`, '{"Lock": 0,"Unlock": 0}\n');
 }
 // "Config/Autolock_Sensor.json" の存在確認と無かった場合のファイル作成"
-if (!fs.existsSync(`${configDirPath}/Autolock_Sensor.json`)) {
-  fs.writeFileSync(
+if (!existsSync(`${configDirPath}/Autolock_Sensor.json`)) {
+  writeFileSync(
     `${configDirPath}/Autolock_Sensor.json`,
-    '{"Autolock_Sensor": false}'
+    '{"Autolock_Sensor": false}\n'
   );
 }
 // "Config/Autolock_Time.json" の存在確認と無かった場合のファイル作成
-if (!fs.existsSync(`${configDirPath}/Autolock_Time.json`)) {
-  fs.writeFileSync(
+if (!existsSync(`${configDirPath}/Autolock_Time.json`)) {
+  writeFileSync(
     `${configDirPath}/Autolock_Time.json`,
-    '{"Autolock_Time": 0}'
+    '{"Autolock_Time": 0}\n'
   );
 }
 
@@ -104,7 +100,7 @@ while (true) {
     )} ${Atomics.load(sharedUint8Array, 2)} ${Atomics.load(
       sharedUint8Array,
       3
-    )}`
+    )} ${Atomics.load(sharedUint8Array, 4)}`
   );
   // カスタムトークンがある(オーナーが登録されている)間はdoor.update_state()
   if (Atomics.load(sharedUint8Array, 2) == true) {

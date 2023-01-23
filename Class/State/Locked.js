@@ -1,11 +1,11 @@
-import * as fs from "fs";
-import path from "path";
-import { fileURLToPath } from "url";
 import { State } from "./State.js";
 import { Unlocked } from "./Unlocked.js";
+import { readFileSync } from "fs";
+import { dirname } from "path";
+import { fileURLToPath } from "url";
 
 //* Configディレクトリのパス
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const __dirname = dirname(fileURLToPath(import.meta.url));
 const configDirPath = `${__dirname}/../../../Config`;
 //console.log(`configDirPath: ${configDirPath}`);
 
@@ -25,7 +25,7 @@ export class Locked extends State {
     // Angle
     const Angle = (() => {
       const Angle = JSON.parse(
-        fs.readFileSync(`${configDirPath}/Angle.json`, "utf-8")
+        readFileSync(`${configDirPath}/Angle.json`, "utf-8")
       );
       // ログ
       console.log(`${JSON.stringify(Angle, null, 2)}`);

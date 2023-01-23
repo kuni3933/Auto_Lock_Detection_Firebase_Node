@@ -1,5 +1,5 @@
-import { getSerialNumber } from "raspi-serial-number";
 import { Unlocked } from "./State/Unlocked.js";
+import { readFile } from "fs";
 
 export class Door {
   // Property
@@ -24,17 +24,16 @@ export class Door {
   }
 
   static async initDoor(sharedArrayBuffer, onValue_isLocked_Thread) {
-    const serialNumber = await getSerialNumber()
-      .then((number) => {
-        return number;
-      })
-      .catch((err) => {
-        console.log(err);
-        return "SerialNumber_3";
-      });
+    const raspPiSerialNumber = await readFile(
+      "/sys/firmware/devicetree/base/serial-number",
+      "utf-8"
+    ).catch((err) => {
+      console.log(err);
+      return "SerialNumber_3";
+    });
 
     const door = new Door(
-      serialNumber,
+      raspPiSerialNumber,
       sharedArrayBuffer,
       onValue_isLocked_Thread
     );

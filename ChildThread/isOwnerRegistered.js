@@ -1,5 +1,5 @@
-import * as fs from "fs";
-import path from "path";
+import { existsSync } from "fs";
+import { dirname } from "path";
 import { fileURLToPath } from "url";
 import { workerData } from "worker_threads";
 
@@ -41,7 +41,7 @@ function setIsAuthStateLoggedIn(bool) {
 }
 
 // customTokenのパス
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const __dirname = dirname(fileURLToPath(import.meta.url));
 const customTokenPath = `${__dirname}/../../Config/customToken.json`;
 //console.log(`customTokenPath: ${customTokenPath}`);
 
@@ -49,7 +49,7 @@ const customTokenPath = `${__dirname}/../../Config/customToken.json`;
 let isOwnerRegistered = false;
 while (true) {
   // このwhile内で一時保持する変数
-  const whileIsOwnerRegistered = fs.existsSync(customTokenPath);
+  const whileIsOwnerRegistered = existsSync(customTokenPath);
 
   // このスレッドで保持している状態変数と比較 && writeFlagがtrueか判定
   if (isOwnerRegistered != whileIsOwnerRegistered) {

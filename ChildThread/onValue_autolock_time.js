@@ -1,11 +1,11 @@
-import * as fs from "fs";
-import path from "path";
-import { fileURLToPath } from "url";
-import { onValue } from "firebase/database";
 import { autolockTimeRef } from "../lib/FirebaseInit.js";
+import { onValue } from "firebase/database";
+import { writeFileSync } from "fs";
+import { dirname } from "path";
+import { fileURLToPath } from "url";
 
 //* Configディレクトリのパス
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const __dirname = dirname(fileURLToPath(import.meta.url));
 const configDirPath = `${__dirname}/../../Config`;
 //console.log(`configDirPath: ${configDirPath}`);
 
@@ -21,8 +21,8 @@ onValue(autolockTimeRef, (snapshot) => {
   console.log(`{ onValue_autolock_time[sec]: ${jsonObj["Autolock_Time"]} }`);
 
   // Config/Autolock_Time.json への書き込み
-  fs.writeFileSync(
+  writeFileSync(
     `${configDirPath}/Autolock_Time.json`,
-    JSON.stringify(jsonObj, null, 2)
+    JSON.stringify(jsonObj, null, 2) + "\n"
   );
 });

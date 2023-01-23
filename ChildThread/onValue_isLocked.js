@@ -1,7 +1,7 @@
-import { parentPort, workerData } from "worker_threads";
+import { isLockedRef, keyStateLogColRef } from "../lib/FirebaseInit.js";
 import { onValue, set } from "firebase/database";
 import { addDoc, serverTimestamp, Timestamp } from "firebase/firestore";
-import { isLockedRef, raspPiSerialNumberDocRef } from "../lib/FirebaseInit.js";
+import { parentPort, workerData } from "worker_threads";
 
 //* 共有メモリの設定
 const sharedUint8Array = new Uint8Array(workerData);
@@ -67,20 +67,20 @@ parentPort.on("message", async (msg) => {
     setIsLocked(isLocked);
 
     // 非ログイン状態だったら2秒待機してログインを待つ
-    if (getIsAuthStateLoggedIn() == false) {
+    if (!getIsAuthStateLoggedIn()) {
       const Time = Date.now();
       while (Date.now() - Time < 2000) {}
     }
 
     // RealtimeDatabase_isLockedに書き込み
-    set(isLockedRef, isLocked).catch((err) => {
+    await set(isLockedRef, isLocked).catch((err) => {
       console.log(err);
     });
 
     // Firestore_keyStateLogCollectionに新規履歴docを追加
     if (getIsConnected()) {
       // Firebaseとのネットワークが確立済みの場合はserverTimestamp()
-      addDoc(keyStateLogColRef, {
+      await addDoc(keyStateLogColRef, {
         keyState: isLocked,
         timeStamp: serverTimestamp(),
         userSerialNo: Number(isLocked).toString(),
@@ -89,7 +89,7 @@ parentPort.on("message", async (msg) => {
       });
     } else {
       // Firebaseとのネットワークが未確立の場合はTimestamp.now()でローカルタイム
-      addDoc(keyStateLogColRef, {
+      await addDoc(keyStateLogColRef, {
         keyState: isLocked,
         timeStamp: Timestamp.now(),
         userSerialNo: Number(isLocked).toString(),

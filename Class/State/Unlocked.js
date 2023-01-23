@@ -1,12 +1,11 @@
-import * as fs from "fs";
-import path from "path";
-import { fileURLToPath } from "url";
-import sleep from "sleep";
 import { State } from "./State.js";
 import { Locked } from "./Locked.js";
+import { readFileSync } from "fs";
+import { dirname } from "path";
+import { fileURLToPath } from "url";
 
 //* Configディレクトリのパス
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const __dirname = dirname(fileURLToPath(import.meta.url));
 const configDirPath = `${__dirname}/../../../Config`;
 //console.log(`configDirPath: ${configDirPath}`);
 
@@ -26,7 +25,7 @@ export class Unlocked extends State {
     // Angle
     const Angle = (() => {
       const Angle = JSON.parse(
-        fs.readFileSync(`${configDirPath}/Angle.json`, "utf-8")
+        readFileSync(`${configDirPath}/Angle.json`, "utf-8")
       );
       // ログ
       console.log(`${JSON.stringify(Angle, null, 2)}`);
@@ -45,7 +44,7 @@ export class Unlocked extends State {
     // Autolock_Sensor
     const Autolock_Sensor = (() => {
       const Autolock_Sensor = JSON.parse(
-        fs.readFileSync(`${configDirPath}/Autolock_Sensor.json`, "utf-8")
+        readFileSync(`${configDirPath}/Autolock_Sensor.json`, "utf-8")
       );
       //ログ
       console.log(`${JSON.stringify(Autolock_Sensor, null, 2)}`);
@@ -55,9 +54,8 @@ export class Unlocked extends State {
     // Autolock_Time
     const Autolock_Time = (() => {
       const Autolock_Time =
-        JSON.parse(
-          fs.readFileSync(`${configDirPath}/Autolock_Time.json`, "utf-8")
-        ).Autolock_Time * 1000;
+        JSON.parse(readFileSync(`${configDirPath}/Autolock_Time.json`, "utf-8"))
+          .Autolock_Time * 1000;
       //ログ
       console.log(`{"Autolock_Time[ms]":${Autolock_Time}}`);
       return Autolock_Time;
@@ -77,7 +75,8 @@ export class Unlocked extends State {
         }
         // ドアが閉まっていて 一度は開いていた場合
         else if (doorIsOpenedOnce == true) {
-          sleep.sleep(1); // 1秒後も開いていなかったらbreak
+          const Time = Date.now();
+          while (Date.now() - Time < 500) {} // 0.5秒後も開いていなかったらbreak
           if (this.isOpened == false) break;
         }
         // firebase側からLockedが指示された場合
@@ -123,7 +122,8 @@ export class Unlocked extends State {
         }
         // ドアが閉まっていて 一度は開いていた場合
         else if (doorIsOpenedOnce == true) {
-          sleep.sleep(1); // 1秒後も開いていなかったらbreak
+          const Time = Date.now();
+          while (Date.now() - Time < 500) {} // 0.5秒後も開いていなかったらbreak
           if (this.isOpened == false) break;
         }
         // firebase側からLockedが指示された場合

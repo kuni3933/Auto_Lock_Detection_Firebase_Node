@@ -1,8 +1,8 @@
-import * as fs from "fs";
 import got from "got";
-import path from "path";
-import { onAuthStateChanged, signInWithCustomToken } from "firebase/auth";
 import { auth } from "../lib/FirebaseInit.js";
+import { onAuthStateChanged, signInWithCustomToken } from "firebase/auth";
+import { readFileSync, writeFileSync } from "fs";
+import { dirname } from "path";
 import { fileURLToPath } from "url";
 import { workerData } from "worker_threads";
 
@@ -44,7 +44,7 @@ function setIsAuthStateLoggedIn(bool) {
 }
 
 // customTokenのパス
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const __dirname = dirname(fileURLToPath(import.meta.url));
 const customTokenPath = `${__dirname}/../../Config/customToken.json`;
 //console.log(`customTokenPath: ${customTokenPath}`);
 
@@ -61,7 +61,7 @@ onAuthStateChanged(auth, async (user) => {
 
     // customToken.jsonの存在確認が取れるまでスリープ
     while (true) {
-      if (getIsOwnerRegistered() == true) {
+      if (getIsOwnerRegistered()) {
         break;
       }
       // 2秒スリープ
@@ -77,7 +77,7 @@ onAuthStateChanged(auth, async (user) => {
       const reqJson = {
         grant_type: "refresh_token",
         refresh_token: `${
-          JSON.parse(fs.readFileSync(customTokenPath))["refreshToken"]
+          JSON.parse(readFileSync(customTokenPath))["refreshToken"]
         }`,
       };
 
@@ -121,10 +121,10 @@ onAuthStateChanged(auth, async (user) => {
       //console.log(response);
 
       if (response.statusCode == 200) {
-        const customTokenJson = JSON.parse(fs.readFileSync(customTokenPath));
+        const customTokenJson = JSON.parse(readFileSync(customTokenPath));
         customToken = JSON.parse(response.body)["customToken"];
         customTokenJson["customToken"] = customToken;
-        fs.writeFileSync(
+        writeFileSync(
           customTokenPath,
           JSON.stringify(customTokenJson, null, 2)
         );

@@ -1,5 +1,5 @@
-import { onDisconnect, onValue, set } from "firebase/database";
 import { dotInfoConnectedRef, isOnlineRef } from "../lib/FirebaseInit.js";
+import { onDisconnect, onValue, set } from "firebase/database";
 import { workerData } from "worker_threads";
 
 //* 共有メモリの設定
@@ -54,7 +54,7 @@ onValue(isOnlineRef, async (snapshot) => {
   console.log(`{ onValue_isOnline: ${onValue_isOnline} }`);
 
   // 非ログイン状態だったら2秒待機してログインを待つ
-  if (getIsAuthStateLoggedIn() == false) {
+  if (!getIsAuthStateLoggedIn()) {
     const Time = Date.now();
     while (Date.now() - Time < 2000) {}
   }

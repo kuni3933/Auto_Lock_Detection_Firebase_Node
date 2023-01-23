@@ -1,3 +1,9 @@
+import {
+  dotInfoConnectedRef,
+  isLockedRef,
+  keyStateLogColRef,
+  raspPiSerialNumberDocRef,
+} from "../lib/FirebaseInit.js";
 import { set, get, onValue } from "firebase/database";
 import {
   addDoc,
@@ -10,12 +16,6 @@ import {
   Timestamp,
   updateDoc,
 } from "firebase/firestore";
-import {
-  dotInfoConnectedRef,
-  isLockedRef,
-  keyStateLogColRef,
-  raspPiSerialNumberDocRef,
-} from "../lib/FirebaseInit.js";
 
 const isLocked = false;
 console.log(`onValue_isLocked.js: Received { isLocked: ${isLocked} }`);

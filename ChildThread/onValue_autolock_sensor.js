@@ -1,11 +1,11 @@
-import * as fs from "fs";
-import path from "path";
-import { fileURLToPath } from "url";
-import { onValue } from "firebase/database";
 import { autolockSensorRef } from "../lib/FirebaseInit.js";
+import { onValue } from "firebase/database";
+import { writeFileSync } from "fs";
+import { dirname } from "path";
+import { fileURLToPath } from "url";
 
 //* Configディレクトリのパス
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const __dirname = dirname(fileURLToPath(import.meta.url));
 const configDirPath = `${__dirname}/../../Config`;
 //console.log(`configDirPath: ${configDirPath}`);
 
@@ -25,9 +25,9 @@ onValue(autolockSensorRef, (snapshot) => {
     jsonObj["Autolock_Sensor"] == true ||
     jsonObj["Autolock_Sensor"] == false
   ) {
-    fs.writeFileSync(
+    writeFileSync(
       `${configDirPath}/Autolock_Sensor.json`,
-      JSON.stringify(jsonObj, null, 2)
+      JSON.stringify(jsonObj, null, 2) + "\n"
     );
   }
 });
