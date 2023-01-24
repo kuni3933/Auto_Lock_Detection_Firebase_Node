@@ -14,8 +14,8 @@ const jsonObj = { Autolock_Sensor: undefined, Autolock_Time: undefined };
 onSnapshot(raspPiSerialNumberDocRef, (docSnapshot) => {
   // ログ
   console.log("childThread: onSnapshot_raspPiSerialNumberDoc.js");
-  console.log(docSnapshot.data());
-
+  console.log(docSnapshot.exists());
+  /*
   // 変更値を格納
   const data = docSnapshot.data();
   jsonObj["Autolock_Sensor"] = data.AutoLockState;
@@ -35,4 +35,5 @@ onSnapshot(raspPiSerialNumberDocRef, (docSnapshot) => {
   // ログ
   console.log(`{ onSnapshot_autolock_sensor: ${jsonObj["Autolock_Sensor"]} }`);
   console.log(`{ onSnapshot_autolock_time[sec]: ${jsonObj["Autolock_Time"]} }`);
+  */
 });
