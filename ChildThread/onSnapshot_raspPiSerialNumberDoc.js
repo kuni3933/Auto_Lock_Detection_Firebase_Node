@@ -9,31 +9,45 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const configDirPath = `${__dirname}/../../Config`;
 //console.log(`configDirPath: ${configDirPath}`);
 
-const jsonObj = { Autolock_Sensor: undefined, Autolock_Time: undefined };
+// 各パスのスレッド内更新用変数
+const autoLockSensorJsonObj = {
+  Autolock_Sensor: undefined,
+};
+const autoLockTimeJsonObj = {
+  Autolock_Time: undefined,
+};
 
 onSnapshot(raspPiSerialNumberDocRef, (docSnapshot) => {
-  // ログ
   console.log("childThread: onSnapshot_raspPiSerialNumberDoc.js");
-  console.log(docSnapshot.exists());
-  /*
-  // 変更値を格納
+  //console.log(docSnapshot.exists());
   const data = docSnapshot.data();
-  jsonObj["Autolock_Sensor"] = data.AutoLockState;
-  jsonObj["Autolock_Time"] = data.AutoLockTime;
 
-  // Config/Autolock_Sensor.json への書き込み
-  writeFileSync(
-    `${configDirPath}/Autolock_Sensor.json.json`,
-    JSON.stringify(jsonObj["Autolock_Sensor"], null, 2) + "\n"
-  );
-  // Config/Autolock_Time.json への書き込み
-  writeFileSync(
-    `${configDirPath}/Autolock_Time.json.json`,
-    JSON.stringify(jsonObj["Autolock_Time"], null, 2) + "\n"
-  );
+  if (autoLockSensorJsonObj["Autolock_Sensor"] != data["AutoLockState"]) {
+    // スレッド内変数の更新
+    autoLockSensorJsonObj["Autolock_Sensor"] = data["AutoLockState"];
 
-  // ログ
-  console.log(`{ onSnapshot_autolock_sensor: ${jsonObj["Autolock_Sensor"]} }`);
-  console.log(`{ onSnapshot_autolock_time[sec]: ${jsonObj["Autolock_Time"]} }`);
-  */
+    // Config/Autolock_Sensor.json への書き込み
+    writeFileSync(
+      `${configDirPath}/Autolock_Sensor.json`,
+      JSON.stringify(jsonObj["Autolock_Sensor"], null, 2) + "\n"
+    );
+  }
+
+  if (autoLockTimeJsonObj["Autolock_Time"] != data["AutoLockTime"]) {
+    // スレッド内変数の更新
+    autoLockTimeJsonObj["Autolock_Time"] = data["AutoLockTime"];
+
+    // Config/Autolock_Time.json への書き込み
+    writeFileSync(
+      `${configDirPath}/Autolock_Time.json`,
+      JSON.stringify(jsonObj["Autolock_Time"], null, 2) + "\n"
+    );
+  }
+
+  console.log(
+    `{ onSnapshot_autolockSensor: ${autoLockSensorJsonObj["Autolock_Sensor"]} }`
+  );
+  console.log(
+    `{ onSnapshot_autolockTime[sec]: ${autoLockTimeJsonObj["Autolock_Time"]} }`
+  );
 });

@@ -68,20 +68,20 @@ export class Unlocked extends State {
     if (Autolock_Time != 0 && Autolock_Sensor == true) {
       let doorIsOpenedOnce = false; // リードスイッチでドアが一回開いたかどうかを判定する変数
       while (Date.now() - this.time < Autolock_Time) {
+        // firebase側からLockedが指示された場合
+        if (this.isLocked != this.isLockedBoolean) {
+          break;
+        }
         // ドアが開いた場合
         if (this.isOpened == true) {
           this.reset(); // タイマーをリセット
           doorIsOpenedOnce = true; // 一度はドアが開いたのでTrue
         }
-        // ドアが閉まっていて 一度は開いていた場合
+        // ドアが開いていた状態から閉まった場合
         else if (doorIsOpenedOnce == true) {
           const Time = Date.now();
           while (Date.now() - Time < 500) {} // 0.5秒後も開いていなかったらbreak
           if (this.isOpened == false) break;
-        }
-        // firebase側からLockedが指示された場合
-        else if (this.isLocked != this.isLockedBoolean) {
-          break;
         }
         //console.log(this.time);
         //console.log(Date.now() - this.time);
@@ -95,13 +95,13 @@ export class Unlocked extends State {
     //* オートロックタイマーが0以上 && リードスイッチによるオートロックがtrue以外 の場合
     else if (Autolock_Time != 0 && Autolock_Sensor != true) {
       while (Date.now() - this.time < Autolock_Time) {
+        // firebase側からLockedを指示された場合
+        if (this.isLocked != this.isLockedBoolean) {
+          break;
+        }
         // ドアが開いた場合
         if (this.isOpened == true) {
           this.reset(); //ドアが空いたらタイマーをリセット
-        }
-        // firebase側からLockedを指示された場合
-        else if (this.isLocked != this.isLockedBoolean) {
-          break;
         }
         //console.log(this.time);
         //console.log(Date.now() - this.time);
@@ -116,6 +116,10 @@ export class Unlocked extends State {
     else if (Autolock_Time == 0 && Autolock_Sensor == true) {
       let doorIsOpenedOnce = false; // リードスイッチでドアが一回開いたかどうかを判定する変数
       while (true) {
+        // firebase側からLockedが指示された場合
+        if (this.isLocked != this.isLockedBoolean) {
+          break;
+        }
         // ドアが開いた場合
         if (this.isOpened == true) {
           doorIsOpenedOnce = true; // 一度はドアが開いたのでTrue
@@ -125,10 +129,6 @@ export class Unlocked extends State {
           const Time = Date.now();
           while (Date.now() - Time < 500) {} // 0.5秒後も開いていなかったらbreak
           if (this.isOpened == false) break;
-        }
-        // firebase側からLockedが指示された場合
-        else if (this.isLocked != this.isLockedBoolean) {
-          break;
         }
         //console.log(this.time);
         //console.log(Date.now() - this.time);

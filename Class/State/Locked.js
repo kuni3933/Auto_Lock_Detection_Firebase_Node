@@ -42,14 +42,14 @@ export class Locked extends State {
     super.wait_for_next_state();
 
     while (true) {
+      // firebase側からUnlockedが指示された場合
+      if (this.isLocked != this.isLockedBoolean) {
+        break;
+      }
       // ドアが開いた場合
       if (this.isOpened == true) {
         // onValue_isLocked_Threadに書き込み処理のためisLockedをPost送信
         this.onValue_isLocked_Thread.postMessage({ isLocked: false });
-        break;
-      }
-      // firebase側からUnlockedが指示された場合
-      else if (this.isLocked != this.isLockedBoolean) {
         break;
       }
     }
