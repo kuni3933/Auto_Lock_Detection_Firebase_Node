@@ -66,6 +66,11 @@ const onValue_angle_Thread = new Worker(
   `${__dirname}/ChildThread/onValue_angle.js`
 );
 
+/* オートロック関連設定の読込/更新を行う子スレッドを起動
+const onSnapshot_autolock_Thread = new Worker(
+  `${__dirname}/ChildThread/onSnapshot_raspPiSerialNumberDoc.js`
+);
+*/
 //* オートロックセンサー設定の読込/更新を行う子スレッドを起動
 const onValue_autolock_sensor_Thread = new Worker(
   `${__dirname}/ChildThread/onValue_autolock_sensor.js`
