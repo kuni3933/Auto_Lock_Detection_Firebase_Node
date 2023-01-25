@@ -10,11 +10,14 @@ const configDirPath = `${__dirname}/../../Config`;
 //console.log(`configDirPath: ${configDirPath}`);
 
 // 各パスのスレッド内更新用変数
-const autoLockSensorJsonObj = {
-  Autolock_Sensor: undefined,
+const autoLockState_jsonObj = {
+  AutoLockState: undefined,
 };
-const autoLockTimeJsonObj = {
-  Autolock_Time: undefined,
+const autoLockStateDelayTime_jsonObj = {
+  AutoLockStateDelayTime: undefined,
+};
+const autoLockTime_jsonObj = {
+  AutoLockTime: undefined,
 };
 
 onSnapshot(raspPiSerialNumberDocRef, (docSnapshot) => {
@@ -22,32 +25,48 @@ onSnapshot(raspPiSerialNumberDocRef, (docSnapshot) => {
   //console.log(docSnapshot.exists());
   const data = docSnapshot.data();
 
-  if (autoLockSensorJsonObj["Autolock_Sensor"] != data["AutoLockState"]) {
+  if (autoLockState_jsonObj["AutoLockState"] != data["AutoLockState"]) {
     // スレッド内変数の更新
-    autoLockSensorJsonObj["Autolock_Sensor"] = data["AutoLockState"];
+    autoLockState_jsonObj["AutoLockState"] = data["AutoLockState"];
 
-    // Config/Autolock_Sensor.json への書き込み
+    // Config/AutoLockState.json への書き込み
     writeFileSync(
-      `${configDirPath}/Autolock_Sensor.json`,
-      JSON.stringify(autoLockSensorJsonObj, null, 2) + "\n"
+      `${configDirPath}/AutoLockState.json`,
+      JSON.stringify(autoLockState_jsonObj, null, 2) + "\n"
+    );
+
+    console.log(`{ onSnapshot_autoLockState: ${data["AutoLockState"]} }`);
+  }
+
+  if (
+    autoLockStateDelayTime_jsonObj["AutoLockStateDelayTime"] !=
+    data["AutoLockStateDelayTime"]
+  ) {
+    // スレッド内変数の更新
+    autoLockStateDelayTime_jsonObj["AutoLockStateDelayTime"] =
+      data["AutoLockStateDelayTime"];
+
+    // Config/AutoLockTime.json への書き込み
+    writeFileSync(
+      `${configDirPath}/AutoLockStateDelayTime.json`,
+      JSON.stringify(autoLockStateDelayTime_jsonObj, null, 2) + "\n"
+    );
+
+    console.log(
+      `{ onSnapshot_autoLockStateDelayTime[sec]: ${data["AutoLockStateDelayTime"]} }`
     );
   }
 
-  if (autoLockTimeJsonObj["Autolock_Time"] != data["AutoLockTime"]) {
+  if (autoLockTime_jsonObj["AutoLockTime"] != data["AutoLockTime"]) {
     // スレッド内変数の更新
-    autoLockTimeJsonObj["Autolock_Time"] = data["AutoLockTime"];
+    autoLockTime_jsonObj["AutoLockTime"] = data["AutoLockTime"];
 
-    // Config/Autolock_Time.json への書き込み
+    // Config/AutoLockTime.json への書き込み
     writeFileSync(
-      `${configDirPath}/Autolock_Time.json`,
-      JSON.stringify(autoLockTimeJsonObj, null, 2) + "\n"
+      `${configDirPath}/AutoLockTime.json`,
+      JSON.stringify(autoLockTime_jsonObj, null, 2) + "\n"
     );
-  }
 
-  console.log(
-    `{ onSnapshot_autolockSensor: ${autoLockSensorJsonObj["Autolock_Sensor"]} }`
-  );
-  console.log(
-    `{ onSnapshot_autolockTime[sec]: ${autoLockTimeJsonObj["Autolock_Time"]} }`
-  );
+    console.log(`{ onSnapshot_autoLockTime[sec]: ${data["AutoLockTime"]} }`);
+  }
 });

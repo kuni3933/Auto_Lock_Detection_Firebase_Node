@@ -14,19 +14,23 @@ const configDirPath = `${__dirname}/../Config`;
 if (!existsSync(`${configDirPath}/Angle.json`)) {
   writeFileSync(`${configDirPath}/Angle.json`, '{"Lock": 0,"Unlock": 0}\n');
 }
-// "Config/Autolock_Sensor.json" の存在確認と無かった場合のファイル作成"
-if (!existsSync(`${configDirPath}/Autolock_Sensor.json`)) {
+// "Config/AutoLockState.json" の存在確認と無かった場合のファイル作成"
+if (!existsSync(`${configDirPath}/AutoLockState.json`)) {
   writeFileSync(
-    `${configDirPath}/Autolock_Sensor.json`,
-    '{"Autolock_Sensor": false}\n'
+    `${configDirPath}/AutoLockState.json`,
+    '{"AutoLockState": false}\n'
   );
 }
-// "Config/Autolock_Time.json" の存在確認と無かった場合のファイル作成
-if (!existsSync(`${configDirPath}/Autolock_Time.json`)) {
+// "Config/AutoLockStateDelayTime.json" の存在確認と無かった場合のファイル作成"
+if (!existsSync(`${configDirPath}/AutoLockStateDelayTime.json`)) {
   writeFileSync(
-    `${configDirPath}/Autolock_Time.json`,
-    '{"Autolock_Time": 0}\n'
+    `${configDirPath}/AutoLockStateDelayTime.json`,
+    '{"AutoLockStateDelayTime": false}\n'
   );
+}
+// "Config/AutoLockTime.json" の存在確認と無かった場合のファイル作成
+if (!existsSync(`${configDirPath}/AutoLockTime.json`)) {
+  writeFileSync(`${configDirPath}/AutoLockTime.json`, '{"AutoLockTime": 0}\n');
 }
 
 //* スレッド間で共有する配列を宣言(4Byte)
@@ -70,17 +74,7 @@ const onValue_angle_Thread = new Worker(
 const onSnapshot_autolock_Thread = new Worker(
   `${__dirname}/ChildThread/onSnapshot_raspPiSerialNumberDoc.js`
 );
-/*
-//* オートロックセンサー設定の読込/更新を行う子スレッドを起動
-const onValue_autolock_sensor_Thread = new Worker(
-  `${__dirname}/ChildThread/onValue_autolock_sensor.js`
-);
 
-//* オートロックタイム設定の読込/更新を行う子スレッドを起動
-const onValue_autolock_time_Thread = new Worker(
-  `${__dirname}/ChildThread/onValue_autolock_time.js`
-);
-*/
 //* RealtimeDatabaseのIs_Lockedを読込/更新する子スレッドを起動
 const onValue_isLocked_Thread = new Worker(
   `${__dirname}/ChildThread/onValue_isLocked.js`,

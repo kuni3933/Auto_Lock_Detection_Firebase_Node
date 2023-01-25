@@ -1,5 +1,5 @@
 import { LcdDisplayClient } from "./LcdDisplayClient.js";
-import { exec } from "child_process";
+import { execSync } from "child_process";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
 
@@ -33,7 +33,7 @@ export class ServoMotorClient {
       // コマンドを実行してstdoutをログ出力
       console.log(
         `execute => ${commandServo}\n`,
-        `stdout: ${exec(commandServo).toString()}\n`
+        `stdout: ${execSync(commandServo).toString()}\n`
       );
     } catch (error) {
       console.log(`error: ${error.toString()}`);

@@ -72,7 +72,7 @@ while (true) {
     whileIsOpened == Boolean(readSwitch.digitalRead()) &&
     getIsOwnerRegistered()
   ) {
-    if (whileIsOpened == false) {
+    if (whileIsOpened == true) {
       lcdDisplayClient.Output("OPEN");
     } else {
       lcdDisplayClient.Output("CLOSE");

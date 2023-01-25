@@ -41,33 +41,46 @@ export class Unlocked extends State {
   wait_for_next_state() {
     super.wait_for_next_state();
 
-    // Autolock_Sensor
-    const Autolock_Sensor = (() => {
-      const Autolock_Sensor = JSON.parse(
-        readFileSync(`${configDirPath}/Autolock_Sensor.json`, "utf-8")
-      );
+    // AutoLockState
+    const AutoLockState = (() => {
+      const AutoLockState = JSON.parse(
+        readFileSync(`${configDirPath}/AutoLockState.json`, "utf-8")
+      ).AutoLockState;
       //ログ
-      console.log(`${JSON.stringify(Autolock_Sensor, null, 2)}`);
-      return Autolock_Sensor.Autolock_Sensor;
+      console.log(`{ "AutoLockState": ${AutoLockState} }`);
+      return AutoLockState;
     })();
 
-    // Autolock_Time
-    const Autolock_Time = (() => {
-      const Autolock_Time =
-        JSON.parse(readFileSync(`${configDirPath}/Autolock_Time.json`, "utf-8"))
-          .Autolock_Time * 1000;
+    // AutoLockStateDelayTime
+    const AutoLockStateDelayTime = (() => {
+      const AutoLockState =
+        JSON.parse(
+          readFileSync(`${configDirPath}/AutoLockStateDelayTime.json`, "utf-8")
+        ).AutoLockStateDelayTime * 1000;
       //ログ
-      console.log(`{"Autolock_Time[ms]":${Autolock_Time}}`);
-      return Autolock_Time;
+      console.log(
+        `{ "AutoLockStateDelayTime[ms]": ${AutoLockStateDelayTime} }`
+      );
+      return AutoLockStateDelayTime;
+    })();
+
+    //   AutoLockTime
+    const AutoLockTime = (() => {
+      const AutoLockTime =
+        JSON.parse(readFileSync(`${configDirPath}/AutoLockTime.json`, "utf-8"))
+          .AutoLockTime * 1000;
+      //ログ
+      console.log(`{ "AutoLockTime[ms]": ${AutoLockTime} }`);
+      return AutoLockTime;
     })();
 
     // タイマー処理等のためにthis.timeをリセット
     this.reset();
 
-    //* オートロックタイマーが0以上 && リードスイッチによるオートロックがtrue の場合
-    if (Autolock_Time != 0 && Autolock_Sensor == true) {
+    //* オートロックタイマーが0より大きい値 の場合
+    if (0 < AutoLockTime) {
       let doorIsOpenedOnce = false; // リードスイッチでドアが一回開いたかどうかを判定する変数
-      while (Date.now() - this.time < Autolock_Time) {
+      while (Date.now() - this.time < AutoLockTime) {
         // firebase側からLockedが指示された場合
         if (this.isLocked != this.isLockedBoolean) {
           break;
@@ -77,10 +90,10 @@ export class Unlocked extends State {
           this.reset(); // タイマーをリセット
           doorIsOpenedOnce = true; // 一度はドアが開いたのでTrue
         }
-        // ドアが開いていた状態から閉まった場合
-        else if (doorIsOpenedOnce == true) {
+        // リードスイッチによるオートロックがtrue && ドアが開いていた状態から閉まった場合
+        else if (AutoLockState == true && doorIsOpenedOnce == true) {
           const Time = Date.now();
-          while (Date.now() - Time < 500) {} // 0.5秒後も開いていなかったらbreak
+          while (Date.now() - Time < AutoLockStateDelayTime) {} // AutoLockStateDelayTime[ms]秒後も開いていなかったらbreak
           if (this.isOpened == false) break;
         }
         //console.log(this.time);
@@ -92,28 +105,8 @@ export class Unlocked extends State {
         this.onValue_isLocked_Thread.postMessage({ isLocked: true });
       }
     }
-    //* オートロックタイマーが0以上 && リードスイッチによるオートロックがtrue以外 の場合
-    else if (Autolock_Time != 0 && Autolock_Sensor != true) {
-      while (Date.now() - this.time < Autolock_Time) {
-        // firebase側からLockedを指示された場合
-        if (this.isLocked != this.isLockedBoolean) {
-          break;
-        }
-        // ドアが開いた場合
-        if (this.isOpened == true) {
-          this.reset(); //ドアが空いたらタイマーをリセット
-        }
-        //console.log(this.time);
-        //console.log(Date.now() - this.time);
-      }
-      // firebase側からLockedを指示されていない場合(即ちまだisLockedがfalseの場合)
-      if (this.isLocked == this.isLockedBoolean) {
-        // onValue_isLocked_Threadに書き込み処理のためisLockedをPost送信
-        this.onValue_isLocked_Thread.postMessage({ isLocked: true });
-      }
-    }
-    //* オートロックタイマーが0 && リードスイッチによるオートロックがtrue の場合
-    else if (Autolock_Time == 0 && Autolock_Sensor == true) {
+    //* オートロックタイマーが0かそれ以外 の場合
+    else {
       let doorIsOpenedOnce = false; // リードスイッチでドアが一回開いたかどうかを判定する変数
       while (true) {
         // firebase側からLockedが指示された場合
@@ -124,10 +117,10 @@ export class Unlocked extends State {
         if (this.isOpened == true) {
           doorIsOpenedOnce = true; // 一度はドアが開いたのでTrue
         }
-        // ドアが閉まっていて 一度は開いていた場合
-        else if (doorIsOpenedOnce == true) {
+        // リードスイッチによるオートロックがtrue && ドアが閉まっていて 一度は開いていた場合
+        else if (AutoLockState == true && doorIsOpenedOnce == true) {
           const Time = Date.now();
-          while (Date.now() - Time < 500) {} // 0.5秒後も開いていなかったらbreak
+          while (Date.now() - Time < AutoLockStateDelayTime) {} // AutoLockStateDelayTime[ms]秒後も開いていなかったらbreak
           if (this.isOpened == false) break;
         }
         //console.log(this.time);
@@ -137,14 +130,6 @@ export class Unlocked extends State {
       if (this.isLocked == this.isLockedBoolean) {
         // onValue_isLocked_Threadに書き込み処理のためisLockedをPost送信
         this.onValue_isLocked_Thread.postMessage({ isLocked: true });
-      }
-    }
-    //* オートロックタイマーが0 && リードスイッチによるオートロックがtrue以外 の場合
-    else {
-      while (true) {
-        if (this.isLocked != this.isLockedBoolean) {
-          break;
-        }
       }
     }
     return new Locked(
