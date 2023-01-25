@@ -22,7 +22,7 @@ export class ServoMotorClient {
   }
 
   //* メソッド
-  async Turn(angle, state) {
+  Turn(angle, state) {
     try {
       // 先にLCD表示
       this.LcdDisplayClient.Output(state);

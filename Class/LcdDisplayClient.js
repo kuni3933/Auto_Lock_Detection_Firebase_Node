@@ -1,4 +1,4 @@
-import { execSync } from "child_process";
+import { exec } from "child_process";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
 
@@ -28,7 +28,7 @@ export class LcdDisplayClient {
       // コマンドを実行してstdoutをログ出力
       console.log(
         `execute => ${commandDisplay}\n`,
-        `stdout: ${execSync(commandDisplay).toString()}\n`
+        `stdout: ${exec(commandDisplay).toString()}\n`
       );
     } catch (error) {
       // クライアントリポジトリがなかった等の場合
