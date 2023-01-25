@@ -29,7 +29,7 @@ onSnapshot(raspPiSerialNumberDocRef, (docSnapshot) => {
     // Config/Autolock_Sensor.json への書き込み
     writeFileSync(
       `${configDirPath}/Autolock_Sensor.json`,
-      JSON.stringify(autoLockSensorJsonObj["Autolock_Sensor"], null, 2) + "\n"
+      JSON.stringify(autoLockSensorJsonObj, null, 2) + "\n"
     );
   }
 
@@ -40,7 +40,7 @@ onSnapshot(raspPiSerialNumberDocRef, (docSnapshot) => {
     // Config/Autolock_Time.json への書き込み
     writeFileSync(
       `${configDirPath}/Autolock_Time.json`,
-      JSON.stringify(autoLockTimeJsonObj["Autolock_Time"], null, 2) + "\n"
+      JSON.stringify(autoLockTimeJsonObj, null, 2) + "\n"
     );
   }
 
