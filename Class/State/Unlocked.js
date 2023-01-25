@@ -53,7 +53,7 @@ export class Unlocked extends State {
 
     // AutoLockStateDelayTime
     const AutoLockStateDelayTime = (() => {
-      const AutoLockState =
+      const AutoLockStateDelayTime =
         JSON.parse(
           readFileSync(`${configDirPath}/AutoLockStateDelayTime.json`, "utf-8")
         ).AutoLockStateDelayTime * 1000;
